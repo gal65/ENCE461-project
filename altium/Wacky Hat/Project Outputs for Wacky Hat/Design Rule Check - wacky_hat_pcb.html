@@ -1,0 +1,732 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html">
+<style type="text/css">
+		h1, h2, h3, h4, h5, h6 {
+			font-family : segoe ui;
+			color : black;
+			background-color : #EDE7D9;
+			padding: 0.3em;
+		}
+
+		h1 {
+			font-size: 1.2em;
+		}		
+
+		h2 {
+			font-size: 1.2em;
+		}
+
+		body {
+			font-family : segoe ui;
+		}
+
+		td, th {
+			padding: 0.5em;
+			text-align : left;
+			width: 10em;
+		}
+		th {
+			background-color : #EEEEEE;
+
+		}
+		th.column1, td.column1 {
+			text-align: left;
+			width : auto;
+		}
+		table {
+			width : 100%;
+			font-size: 0.9em;
+		}
+
+		.DRC_summary_header {
+			padding-bottom : 0.1em;
+			border : 0px solid black;
+			width: 100%;
+			align: left;
+		}
+
+		.DRC_summary_header_col1,
+		.DRC_summary_header_col2, 
+		.DRC_summary_header_col3 {
+			color : black;
+			font-size:100%;
+			padding : 0em;
+			padding-top : 0.2em;
+			padding-bottom 0.2em;
+			border : 0px solid black;
+			vertical-align: top;
+			text-align: left;
+		}
+
+		.DRC_summary_header_col1 {
+			font-weight: bold;
+			width: 8em;
+		}
+
+		.DRC_summary_header_col2 {
+			width: 0.1em;
+		
+		}
+
+		.DRC_summary_header_col3 {
+			width : auto;
+		}
+
+		.header_holder {
+		    Width = 100%;
+		    border = 0px solid green;
+		    padding = 0;
+		}
+
+
+		.front_matter, .front_matter_column1, .front_matter_column2, .front_matter_column3
+		{
+			left : 0;
+			top : 0;
+			padding: 0em;
+			padding-top : 0.1em;
+			border : 0px solid black;
+			width : 100%;
+			vertical-align: top;
+			text-align: left;
+		}
+
+		.front_matter_column1 {
+			width : 8em;
+			font-weight: bold;
+		}
+
+		.front_matter_column2 {
+			width: 0.1em;
+		}
+
+		.front_matter_column3 {
+			width : auto;
+		}
+
+		.total_column1, .total_column {
+			font-weight : bold;
+		}
+		.total_column1 {
+			text-align : left;
+		}
+		.warning, .error {
+			color : red;
+			font-weight : bold;
+		}
+		tr.onmouseout_odd {
+			background-color : #white;
+		}
+		tr.onmouseout_even { 
+			background-color : #FAFAFA;
+		}
+		tr.onmouseover_odd, tr.onmouseover_even { 
+			background-color : #EEEEEE;
+		} 
+		a:link, a:visited, .q a:link,.q a:active,.q {
+			color: #21489e; 
+		}
+		a:link.callback, a:visited.callback { 
+			color: #21489e;
+		}
+		a:link.customize, a:visited.customize {
+			color: #C0C0C0;
+			position: absolute; 
+			right: 10px;
+		}	
+		p.contents_level1 {
+			font-weight : bold;
+			font-size : 110%;
+			margin : 0.5em;
+		}
+		p.contents_level2 {
+			position : relative;
+			left : 20px;
+			margin : 0.5em;
+		}
+	</style><script type="text/javascript">
+		function coordToMils(coord) {
+			var number = coord / 10000;
+			
+			if (number != number.toFixed(3))
+				number = number.toFixed(3);
+
+			return number + 'mil'
+		}
+
+		function coordToMM(coord) {
+			var number = 0.0254 * coord / 10000;
+			
+			if (number != number.toFixed(4))
+				number = number.toFixed(4);
+			
+			return number + 'mm'
+		}
+	
+		function convertCoord(coordNode, units) {
+			for (var i = 0; i < coordNode.childNodes.length; i++) {
+				coordNode.removeChild(coordNode.childNodes[i]);
+			}
+
+			var coord = coordNode.getAttribute('value');
+			if (coord != null) {
+				if (units == 'mm') {
+					textNode = document.createTextNode(coordToMM(coord));
+					coordNode.appendChild(textNode);
+				} else if (units == 'mil') {
+					textNode = document.createTextNode(coordToMils(coord));		
+					coordNode.appendChild(textNode);	
+				}
+			}
+		}
+	
+		function convertUnits(unitNode, units) {
+			for (var i = 0; i < unitNode.childNodes.length; i++) {
+				unitNode.removeChild(unitNode.childNodes[i]);		
+			}
+		
+			textNode = document.createTextNode(units); 
+			unitNode.appendChild(textNode);
+		}
+	
+		function changeUnits(radio_input, units) {
+			if (radio_input.checked) {
+			
+				var elements = document.getElementsByName('coordinate');
+				if (elements) {
+					for (var i = 0; i < elements.length; i++) {
+						convertCoord(elements[i], units);
+					}
+				}
+	
+				var elements = document.getElementsByName('units');
+				if (elements) {
+					for (var i = 0; i < elements.length; i++) {
+						convertUnits(elements[i], units);
+					}
+				}
+			}
+		}
+	</script><title>Design Rule Verification Report</title>
+</head>
+<body onload=""><img ALT="Altium" src="
+			file://C:\Users\Public\Documents\Altium\AD19\Templates\AD_logo.png
+		"><h1>Design Rule Verification Report</h1>
+<table class="header_holder">
+<td class="column1">
+<table class="front_matter">
+<tr class="front_matter">
+<td class="front_matter_column1">Date:</td>
+<td class="front_matter_column2"></td>
+<td class="front_matter_column3">23/03/2021</td>
+</tr>
+<tr class="front_matter">
+<td class="front_matter_column1">Time:</td>
+<td class="front_matter_column2"></td>
+<td class="front_matter_column3">5:02:01 pm</td>
+</tr>
+<tr class="front_matter">
+<td class="front_matter_column1">Elapsed Time:</td>
+<td class="front_matter_column2"></td>
+<td class="front_matter_column3">00:00:02</td>
+</tr>
+<tr class="front_matter">
+<td class="front_matter_column1">Filename:</td>
+<td class="front_matter_column2"></td>
+<td class="front_matter_column3"><a href="file:///P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc" class="file"><acronym title="P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc">P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc</acronym></a></td>
+</tr>
+</table>
+</td>
+<td class="column2">
+<table class="DRC_summary_header">
+<tr>
+<td class="DRC_summary_header_col1">Warnings:</td>
+<td class="DRC_summary_header_col2"></td>
+<td class="DRC_summary_header_col3">0</td></tr>
+<tr>
+<td class="DRC_summary_header_col1">Rule Violations:</td>
+<td class="DRC_summary_header_col2"></td>
+<td class="DRC_summary_header_col3" style="color : red">120</td></tr>
+</table>
+</td>
+</table><a name="IDWO00PVTQS5PIGCW5GFWWIZM4XB4TYOED5FR5QFD1OHKYBUAY3VZH"><h2>Summary</h2></a><table>
+<tr>
+<th class="column1">Warnings</th>
+<th class="column2">Count</th>
+</tr>
+<tr>
+<td style="font-weight : bold; text-align : right" class="column1">Total</td>
+<td style="font-weight : bold" class="column2">0</td>
+</tr>
+</table><br><table>
+<tr>
+<th class="column1">Rule Violations</th>
+<th class="column2">Count</th>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#ID2QM2ZRMMH2ETEHSDVVHGKYI0GNZ2J4PZSCQ2OYO1DIF0QRPPCEGI">Clearance Constraint (Gap=0.15mm) (All),(All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#IDGSQN3D3IJASVMXR40QO0FU4JPK1YIMHPRKCOXLM3RHOQWLR0S3GE">Short-Circuit Constraint (Allowed=No) (All),(All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#IDXVAC5C1DARCTO40PJNNFCQPIIJCB4THBSTOO1FECMN2CHKWMZEDM">Un-Routed Net Constraint ( (All) )</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#IDJC0AXK0RSN4DD5ZRULJGOVO5UO0P0NGJOG4EY2O53IC0CJUY2CRF">Modified Polygon (Allow modified: No), (Allow shelved: No)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#IDELSJDB1RGCKJHE1UVS0HAGV1FNH2CV3IPMPNVHBQOKYRDUHHNLQB">Width Constraint (Min=0.15mm) (Max=0.4mm) (Preferred=0.4mm) (InNetClass('Power Rails'))</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#IDTMBE11GSCIANKSVNYHFOWGVT3OKWUZQL1GLBAQNMJQCR0PYB425C">Width Constraint (Min=0.5mm) (Max=0.6mm) (Preferred=0.6mm) (InNetClass('Battery power rails'))</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#IDL3PPABASPW5RBO1FKFVR45IOIDPZHPLCS0G0YDCNEAP2SD4HZEH">Width Constraint (Min=0.15mm) (Max=2mm) (Preferred=0.3mm) (All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#IDX2APFLYWLP15BBC1VA2I5O0UWFUCAQFNMDX4R0H10EKODK4G4WGI">SMD To Corner (Distance=0.25mm) (All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#IDR3EK4CVJQSKNOT3HF404EZ4DKJKFGR2O1L1JCTCEPFIPRBL1X0W">SMD To Plane Constraint (Distance=5mm) (All)</a></td>
+<td class="column2">34</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#IDHBAVZ20RLYYJHLDZ5IWAZ0KIEOPHCV40TSQDEZBENXVAWBD1DCLD">SMD Neck-Down Constraint (Percent=50%) (Disabled)(All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#IDWI2ATLZXLEMQBIZOONXRFYXDKIMHIMRWQRIJL0KUJMZHIR2UJYMF">Power Plane Connect Rule(Relief Connect )(Expansion=0.508mm) (Conductor Width=0.254mm) (Air Gap=0.254mm) (Entries=4) (All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#IDEDX1TLWTKNAXPG0G0JG4OSD0RKE3DPGAMZRFGBFXIFRP5KLEXM2C">Minimum Annular Ring (Minimum=0.1mm) (All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#IDINWB3WSD1EZLD4XWYJVHGFHBHDKRU3NV32RZ5ZC2PNBUZJWUNAJC">Hole Size Constraint (Min=0.3mm) (Max=10mm) (All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#IDZBRKJXFQPN0KF44SVCFSKI4Z4FJX3E5XFPN5NGBD1N1UMXMOTKCL">Hole To Hole Clearance (Gap=0.254mm) (All),(All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#IDJ5Z1ZCLGPR3KGDN13Y3A5NY5ZL2HOM5UQHMH1XHXLR5KDQJLBNJG">Minimum Solder Mask Sliver (Gap=0.1mm) (All),(All)</a></td>
+<td class="column2">4</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#IDKL4XLV5VUZIHEHATIN4L1ADJJDXFPTM3MLXBRHN5L1FVDRHZFVFN">Silk To Solder Mask (Clearance=0.254mm) (IsPad),(All)</a></td>
+<td class="column2">61</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#IDXZJK05SN1LLHINSINSSFSUSYHJF0MYLYNAPT1PC2CQ435CL2ZASD">Silk to Silk (Clearance=0.254mm) (All),(All)</a></td>
+<td class="column2">19</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#IDAM50SXBOGDLIFLRJUKN0JSIOYBOSQLIW1GGLYLDFXCVJ3XR3QULO">Net Antennae (Tolerance=1mm) (All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#IDB0HWAHOXODA3IVYNTB1MQWNFTMGQFJTBURU5D3KDYJT3CE3C2QSF">Board Clearance Constraint (Gap=0mm) (All)</a></td>
+<td class="column2">2</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#IDFSKHAXKFMJK4JVTHTN04RABVEHSCKKGWOS45VOKG3X0TT1KSR2NO">Height Constraint (Min=0mm) (Max=25.4mm) (Prefered=12.7mm) (All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr>
+<td style="font-weight : bold; text-align : right" class="column1">Total</td>
+<td style="font-weight : bold" class="column2">120</td>
+</tr>
+</table><br><a name="IDR3EK4CVJQSKNOT3HF404EZ4DKJKFGR2O1L1JCTCEPFIPRBL1X0W"><table>
+<tr>
+<th style="text-align : left" colspan="1" class="rule">SMD To Plane Constraint (Distance=5mm) (All)</th>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=5507.23mil|Location2.X=5573.188mil|Location1.Y=-9.949mil|Location2.Y=12.086mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=5507.23mil|Location2.X=5573.188mil|Location1.Y=-9.949mil|Location2.Y=12.086mil|Absolute=True">SMD To Plane Constraint: Pad C1-1(51.5mm,33.5mm) on Top Side Actual Distance = 2539.975mm</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6151.634mil|Location2.X=6217.591mil|Location1.Y=-9.949mil|Location2.Y=12.086mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6151.634mil|Location2.X=6217.591mil|Location1.Y=-9.949mil|Location2.Y=12.086mil|Absolute=True">SMD To Plane Constraint: Pad C1-2(50.1mm,33.5mm) on Top Side Actual Distance = 2539.975mm</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=-196494.054mil|Location2.X=-99967.827mil|Location1.Y=-9.949mil|Location2.Y=12.086mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=-196494.054mil|Location2.X=-99967.827mil|Location1.Y=-9.949mil|Location2.Y=12.086mil|Absolute=True">SMD To Plane Constraint: Pad C2-1(51.5mm,32mm) on Top Side Actual Distance = 2539.975mm</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6151.25mil|Location2.X=6217.207mil|Location1.Y=-9.949mil|Location2.Y=12.086mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6151.25mil|Location2.X=6217.207mil|Location1.Y=-9.949mil|Location2.Y=12.086mil|Absolute=True">SMD To Plane Constraint: Pad C23-1(53.3mm,60mm) on Top Side Actual Distance = 2539.975mm</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6361.887mil|Location2.X=6436.017mil|Location1.Y=-12.311mil|Location2.Y=14.736mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6361.887mil|Location2.X=6436.017mil|Location1.Y=-12.311mil|Location2.Y=14.736mil|Absolute=True">SMD To Plane Constraint: Pad C27-2(14.3mm,27.5mm) on Top Side Actual Distance = 2539.975mm</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=-196498.414mil|Location2.X=-99967.827mil|Location1.Y=-13.492mil|Location2.Y=16.081mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=-196498.414mil|Location2.X=-99967.827mil|Location1.Y=-13.492mil|Location2.Y=16.081mil|Absolute=True">SMD To Plane Constraint: Pad C28-2(14.3mm,25.9mm) on Top Side Actual Distance = 2539.975mm</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6364.082mil|Location2.X=6430.039mil|Location1.Y=-9.949mil|Location2.Y=12.086mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6364.082mil|Location2.X=6430.039mil|Location1.Y=-9.949mil|Location2.Y=12.086mil|Absolute=True">SMD To Plane Constraint: Pad C29-2(23.2mm,64.1mm) on Top Side Actual Distance = 2539.975mm</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=5506.726mil|Location2.X=5572.684mil|Location1.Y=-9.949mil|Location2.Y=12.086mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=5506.726mil|Location2.X=5572.684mil|Location1.Y=-9.949mil|Location2.Y=12.086mil|Absolute=True">SMD To Plane Constraint: Pad C30-2(21.6mm,60mm) on Top Side Actual Distance = 2539.975mm</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=-214509.837mil|Location2.X=-99967.827mil|Location1.Y=-9.949mil|Location2.Y=12.086mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=-214509.837mil|Location2.X=-99967.827mil|Location1.Y=-9.949mil|Location2.Y=12.086mil|Absolute=True">SMD To Plane Constraint: Pad C32-2(32.8mm,69.9mm) on Top Side Actual Distance = 2539.975mm</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6364.594mil|Location2.X=6430.551mil|Location1.Y=-9.949mil|Location2.Y=12.086mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6364.594mil|Location2.X=6430.551mil|Location1.Y=-9.949mil|Location2.Y=12.086mil|Absolute=True">SMD To Plane Constraint: Pad C37-2(45.305mm,58.095mm) on Top Side Actual Distance = 2539.975mm</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=-196498.078mil|Location2.X=-99967.827mil|Location1.Y=-13.492mil|Location2.Y=16.081mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=-196498.078mil|Location2.X=-99967.827mil|Location1.Y=-13.492mil|Location2.Y=16.081mil|Absolute=True">SMD To Plane Constraint: Pad C4-1(23mm,12mm) on Top Side Actual Distance = 2539.975mm</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=70335.498mil|Location2.X=70401.455mil|Location1.Y=-9.949mil|Location2.Y=12.086mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=70335.498mil|Location2.X=70401.455mil|Location1.Y=-9.949mil|Location2.Y=12.086mil|Absolute=True">SMD To Plane Constraint: Pad C42-1(23mm,1.8mm) on Top Side Actual Distance = 2539.975mm</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=5506.63mil|Location2.X=5572.588mil|Location1.Y=-9.949mil|Location2.Y=12.086mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=5506.63mil|Location2.X=5572.588mil|Location1.Y=-9.949mil|Location2.Y=12.086mil|Absolute=True">SMD To Plane Constraint: Pad C44-1(37.8mm,15mm) on Top Side Actual Distance = 2539.975mm</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6151.226mil|Location2.X=6217.183mil|Location1.Y=-9.949mil|Location2.Y=12.086mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6151.226mil|Location2.X=6217.183mil|Location1.Y=-9.949mil|Location2.Y=12.086mil|Absolute=True">SMD To Plane Constraint: Pad DL4-2(35.5mm,45.9mm) on Top Side Actual Distance = 2539.975mm</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6350.42mil|Location2.X=6450.393mil|Location1.Y=-24.122mil|Location2.Y=24.448mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6350.42mil|Location2.X=6450.393mil|Location1.Y=-24.122mil|Location2.Y=24.448mil|Absolute=True">SMD To Plane Constraint: Pad GND_TP_1-1(30mm,31mm) on Top Side Actual Distance = 2539.975mm</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=-196508.572mil|Location2.X=-99967.827mil|Location1.Y=-24.122mil|Location2.Y=24.448mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=-196508.572mil|Location2.X=-99967.827mil|Location1.Y=-24.122mil|Location2.Y=24.448mil|Absolute=True">SMD To Plane Constraint: Pad GND_TP_3-1(51.9mm,66.5mm) on Top Side Actual Distance = 2539.975mm</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=5508.14mil|Location2.X=5569.961mil|Location1.Y=-8.768mil|Location2.Y=10.741mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=5508.14mil|Location2.X=5569.961mil|Location1.Y=-8.768mil|Location2.Y=10.741mil|Absolute=True">SMD To Plane Constraint: Pad R1-2(38.5mm,36mm) on Top Side Actual Distance = 2539.975mm</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=70332.29mil|Location2.X=70410.546mil|Location1.Y=-13.492mil|Location2.Y=16.081mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=70332.29mil|Location2.X=70410.546mil|Location1.Y=-13.492mil|Location2.Y=16.081mil|Absolute=True">SMD To Plane Constraint: Pad R18-1(48.85mm,66.5mm) on Top Side Actual Distance = 2539.975mm</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6152.335mil|Location2.X=6214.156mil|Location1.Y=-8.768mil|Location2.Y=10.741mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6152.335mil|Location2.X=6214.156mil|Location1.Y=-8.768mil|Location2.Y=10.741mil|Absolute=True">SMD To Plane Constraint: Pad R5-1(32.5mm,49.6mm) on Top Side Actual Distance = 2539.975mm</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=70336.647mil|Location2.X=70398.468mil|Location1.Y=-8.768mil|Location2.Y=10.741mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=70336.647mil|Location2.X=70398.468mil|Location1.Y=-8.768mil|Location2.Y=10.741mil|Absolute=True">SMD To Plane Constraint: Pad R7-1(24.5mm,33mm) on Top Side Actual Distance = 2539.975mm</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=-196503.239mil|Location2.X=-99967.827mil|Location1.Y=-19.398mil|Location2.Y=21.107mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=-196503.239mil|Location2.X=-99967.827mil|Location1.Y=-19.398mil|Location2.Y=21.107mil|Absolute=True">SMD To Plane Constraint: Pad S4-2(24.2mm,78.2mm) on Top Side Actual Distance = 2539.975mm</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=-214507.435mil|Location2.X=-99967.827mil|Location1.Y=-7.586mil|Location2.Y=9.405mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=-214507.435mil|Location2.X=-99967.827mil|Location1.Y=-7.586mil|Location2.Y=9.405mil|Absolute=True">SMD To Plane Constraint: Pad U10-2(39.95mm,10.8mm) on Top Side Actual Distance = 2539.975mm</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=-196486.512mil|Location2.X=-99967.827mil|Location1.Y=-2.862mil|Location2.Y=4.985mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=-196486.512mil|Location2.X=-99967.827mil|Location1.Y=-2.862mil|Location2.Y=4.985mil|Absolute=True">SMD To Plane Constraint: Pad U1-1(43.993mm,33.135mm) on Top Side Actual Distance = 2539.975mm</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6158.496mil|Location2.X=6203.566mil|Location1.Y=-2.862mil|Location2.Y=4.985mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6158.496mil|Location2.X=6203.566mil|Location1.Y=-2.862mil|Location2.Y=4.985mil|Absolute=True">SMD To Plane Constraint: Pad U1-11(47.143mm,35.935mm) on Top Side Actual Distance = 2539.975mm</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6371.944mil|Location2.X=6417.014mil|Location1.Y=-2.862mil|Location2.Y=4.985mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6371.944mil|Location2.X=6417.014mil|Location1.Y=-2.862mil|Location2.Y=4.985mil|Absolute=True">SMD To Plane Constraint: Pad U1-8(47.143mm,34.735mm) on Top Side Actual Distance = 2539.975mm</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=-214429.87mil|Location2.X=-99967.827mil|Location1.Y=-2.862mil|Location2.Y=4.985mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=-214429.87mil|Location2.X=-99967.827mil|Location1.Y=-2.862mil|Location2.Y=4.985mil|Absolute=True">SMD To Plane Constraint: Pad U1-9(47.143mm,35.135mm) on Top Side Actual Distance = 2539.975mm</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=5509.794mil|Location2.X=5569.557mil|Location1.Y=-8.177mil|Location2.Y=10.083mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=5509.794mil|Location2.X=5569.557mil|Location1.Y=-8.177mil|Location2.Y=10.083mil|Absolute=True">SMD To Plane Constraint: Pad U2-5(30.2mm,10.7mm) on Top Side Actual Distance = 2539.975mm</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6157.866mil|Location2.X=6203.944mil|Location1.Y=-3.453mil|Location2.Y=5.402mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6157.866mil|Location2.X=6203.944mil|Location1.Y=-3.453mil|Location2.Y=5.402mil|Absolute=True">SMD To Plane Constraint: Pad U6-1(35.75mm,65.525mm) on Top Side Actual Distance = 2539.975mm</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=-196487.654mil|Location2.X=-99967.827mil|Location1.Y=-3.453mil|Location2.Y=5.402mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=-196487.654mil|Location2.X=-99967.827mil|Location1.Y=-3.453mil|Location2.Y=5.402mil|Absolute=True">SMD To Plane Constraint: Pad U6-45(34.25mm,54.475mm) on Top Side Actual Distance = 2539.975mm</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=70341.906mil|Location2.X=70387.984mil|Location1.Y=-3.453mil|Location2.Y=5.402mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=70341.906mil|Location2.X=70387.984mil|Location1.Y=-3.453mil|Location2.Y=5.402mil|Absolute=True">SMD To Plane Constraint: Pad U6-58(37.525mm,60.75mm) on Top Side Actual Distance = 2539.975mm</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=5513.974mil|Location2.X=5560.052mil|Location1.Y=-3.453mil|Location2.Y=5.402mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=5513.974mil|Location2.X=5560.052mil|Location1.Y=-3.453mil|Location2.Y=5.402mil|Absolute=True">SMD To Plane Constraint: Pad U6-7(32.75mm,65.525mm) on Top Side Actual Distance = 2539.975mm</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=-214507.188mil|Location2.X=-99967.827mil|Location1.Y=-6.5mil|Location2.Y=8.197mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=-214507.188mil|Location2.X=-99967.827mil|Location1.Y=-6.5mil|Location2.Y=8.197mil|Absolute=True">SMD To Plane Constraint: Pad U7-5(16.689mm,27.405mm) on Top Side Actual Distance = 2539.975mm</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=-196495.772mil|Location2.X=-99967.827mil|Location1.Y=-11.13mil|Location2.Y=13.421mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=-196495.772mil|Location2.X=-99967.827mil|Location1.Y=-11.13mil|Location2.Y=13.421mil|Absolute=True">SMD To Plane Constraint: Pad U8-2(46mm,17.314mm) on Top Side Actual Distance = 2539.975mm</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6154.236mil|Location2.X=6211.931mil|Location1.Y=-7.586mil|Location2.Y=9.405mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6154.236mil|Location2.X=6211.931mil|Location1.Y=-7.586mil|Location2.Y=9.405mil|Absolute=True">SMD To Plane Constraint: Pad U9-2(18.5mm,2.95mm) on Top Side Actual Distance = 2539.975mm</acronym></a><br></td>
+</tr>
+</table></a><hr color="#EEEEEE"><a href="#top" style="font-size: 0.9em">Back to top</a><br><br><a name="IDJ5Z1ZCLGPR3KGDN13Y3A5NY5ZL2HOM5UQHMH1XHXLR5KDQJLBNJG"><table>
+<tr>
+<th style="text-align : left" colspan="1" class="rule">Minimum Solder Mask Sliver (Gap=0.1mm) (All),(All)</th>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2830.021mil|Location2.X=2835.208mil|Location1.Y=2171.619mil|Location2.Y=2176.806mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2830.021mil|Location2.X=2835.208mil|Location1.Y=2171.619mil|Location2.Y=2176.806mil|Absolute=True">Minimum Solder Mask Sliver Constraint: (0.097mm &lt; 0.1mm) Between Pad U2-1(32.6mm,9.75mm) on Top Side And Pad U2-2(32.6mm,10.7mm) on Top Side [Top Solder] Mask Sliver [0.097mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2830.021mil|Location2.X=2835.208mil|Location1.Y=2209.021mil|Location2.Y=2214.208mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2830.021mil|Location2.X=2835.208mil|Location1.Y=2209.021mil|Location2.Y=2214.208mil|Absolute=True">Minimum Solder Mask Sliver Constraint: (0.097mm &lt; 0.1mm) Between Pad U2-2(32.6mm,10.7mm) on Top Side And Pad U2-3(32.6mm,11.65mm) on Top Side [Top Solder] Mask Sliver [0.097mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2735.533mil|Location2.X=2740.72mil|Location1.Y=2209.021mil|Location2.Y=2214.208mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2735.533mil|Location2.X=2740.72mil|Location1.Y=2209.021mil|Location2.Y=2214.208mil|Absolute=True">Minimum Solder Mask Sliver Constraint: (0.097mm &lt; 0.1mm) Between Pad U2-4(30.2mm,11.65mm) on Top Side And Pad U2-5(30.2mm,10.7mm) on Top Side [Top Solder] Mask Sliver [0.097mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2735.533mil|Location2.X=2740.72mil|Location1.Y=2171.619mil|Location2.Y=2176.806mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2735.533mil|Location2.X=2740.72mil|Location1.Y=2171.619mil|Location2.Y=2176.806mil|Absolute=True">Minimum Solder Mask Sliver Constraint: (0.097mm &lt; 0.1mm) Between Pad U2-5(30.2mm,10.7mm) on Top Side And Pad U2-6(30.2mm,9.75mm) on Top Side [Top Solder] Mask Sliver [0.097mm]</acronym></a><br></td>
+</tr>
+</table></a><hr color="#EEEEEE"><a href="#top" style="font-size: 0.9em">Back to top</a><br><br><a name="IDKL4XLV5VUZIHEHATIN4L1ADJJDXFPTM3MLXBRHN5L1FVDRHZFVFN"><table>
+<tr>
+<th style="text-align : left" colspan="1" class="rule">Silk To Solder Mask (Clearance=0.254mm) (IsPad),(All)</th>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3293.427mil|Location2.X=3304.677mil|Location1.Y=3064.658mil|Location2.Y=3075.908mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3293.427mil|Location2.X=3304.677mil|Location1.Y=3064.658mil|Location2.Y=3075.908mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.252mm &lt; 0.254mm) Between Arc (43.493mm,32.985mm) on Top Overlay And Pad U1-1(43.993mm,33.135mm) on Top Side [Top Overlay] to [Top Solder] clearance [0.252mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3107.101mil|Location2.X=3118.351mil|Location1.Y=4904.887mil|Location2.Y=4916.137mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3107.101mil|Location2.X=3118.351mil|Location1.Y=4904.887mil|Location2.Y=4916.137mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.221mm &lt; 0.254mm) Between Pad H1-5(38.66mm,80.5mm) on Multi-Layer And Text "e" (41.222mm,78.475mm) on Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.221mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3171.257mil|Location2.X=3182.507mil|Location1.Y=4958.661mil|Location2.Y=4969.911mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3171.257mil|Location2.X=3182.507mil|Location1.Y=4958.661mil|Location2.Y=4969.911mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.155mm &lt; 0.254mm) Between Pad H1-6(41.2mm,80.5mm) on Multi-Layer And Text "d" (43.06mm,78.967mm) on Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.155mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3166.193mil|Location2.X=3177.443mil|Location1.Y=4914.701mil|Location2.Y=4925.951mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3166.193mil|Location2.X=3177.443mil|Location1.Y=4914.701mil|Location2.Y=4925.951mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.041mm &lt; 0.254mm) Between Pad H1-6(41.2mm,80.5mm) on Multi-Layer And Text "e" (41.222mm,78.475mm) on Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.041mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3317.441mil|Location2.X=3328.691mil|Location1.Y=4949.511mil|Location2.Y=4961.727mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3317.441mil|Location2.X=3328.691mil|Location1.Y=4949.511mil|Location2.Y=4961.727mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.022mm &lt; 0.254mm) Between Pad H1-7(43.74mm,80.5mm) on Multi-Layer And Text "a" (45.06mm,79.503mm) on Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.022mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3320.204mil|Location2.X=3331.454mil|Location1.Y=4918.977mil|Location2.Y=4930.227mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3320.204mil|Location2.X=3331.454mil|Location1.Y=4918.977mil|Location2.Y=4930.227mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.172mm &lt; 0.254mm) Between Pad H1-7(43.74mm,80.5mm) on Multi-Layer And Text "M" (46.815mm,79.974mm) on Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.172mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3386.297mil|Location2.X=3399.995mil|Location1.Y=4903.999mil|Location2.Y=4915.249mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3386.297mil|Location2.X=3399.995mil|Location1.Y=4903.999mil|Location2.Y=4915.249mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.095mm &lt; 0.254mm) Between Pad H1-8(46.28mm,80.5mm) on Multi-Layer And Text "M" (46.815mm,79.974mm) on Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.095mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2084.016mil|Location2.X=2095.266mil|Location1.Y=2116.143mil|Location2.Y=2129.665mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2084.016mil|Location2.X=2095.266mil|Location1.Y=2116.143mil|Location2.Y=2129.665mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.202mm &lt; 0.254mm) Between Pad H5-3(13.7mm,8.2mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.202mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2212.084mil|Location2.X=2225.534mil|Location1.Y=3793.644mil|Location2.Y=3804.894mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2212.084mil|Location2.X=2225.534mil|Location1.Y=3793.644mil|Location2.Y=3804.894mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.019mm &lt; 0.254mm) Between Pad H9-1(16.44mm,51mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.019mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2201.952mil|Location2.X=2213.202mil|Location1.Y=3763.714mil|Location2.Y=3774.964mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2201.952mil|Location2.X=2213.202mil|Location1.Y=3763.714mil|Location2.Y=3774.964mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.121mm &lt; 0.254mm) Between Pad H9-1(16.44mm,51mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.121mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2184.609mil|Location2.X=2198.252mil|Location1.Y=3739.122mil|Location2.Y=3750.372mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2184.609mil|Location2.X=2198.252mil|Location1.Y=3739.122mil|Location2.Y=3750.372mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.122mm &lt; 0.254mm) Between Pad H9-1(16.44mm,51mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.122mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2208.147mil|Location2.X=2219.397mil|Location1.Y=3809.719mil|Location2.Y=3820.969mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2208.147mil|Location2.X=2219.397mil|Location1.Y=3809.719mil|Location2.Y=3820.969mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.169mm &lt; 0.254mm) Between Pad H9-1(16.44mm,51mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.169mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2180.798mil|Location2.X=2192.048mil|Location1.Y=3786.374mil|Location2.Y=3797.624mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2180.798mil|Location2.X=2192.048mil|Location1.Y=3786.374mil|Location2.Y=3797.624mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.16mm &lt; 0.254mm) Between Pad H9-1(16.44mm,51mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.16mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2204.181mil|Location2.X=2215.431mil|Location1.Y=3783.826mil|Location2.Y=3797.421mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2204.181mil|Location2.X=2215.431mil|Location1.Y=3783.826mil|Location2.Y=3797.421mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.211mm &lt; 0.254mm) Between Pad H9-1(16.44mm,51mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.211mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2208.147mil|Location2.X=2219.397mil|Location1.Y=3737.216mil|Location2.Y=3748.466mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2208.147mil|Location2.X=2219.397mil|Location1.Y=3737.216mil|Location2.Y=3748.466mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.214mm &lt; 0.254mm) Between Pad H9-1(16.44mm,51mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.214mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2221.086mil|Location2.X=2234.537mil|Location1.Y=3801.214mil|Location2.Y=3812.464mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2221.086mil|Location2.X=2234.537mil|Location1.Y=3801.214mil|Location2.Y=3812.464mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.227mm &lt; 0.254mm) Between Pad H9-1(16.44mm,51mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.227mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2181.431mil|Location2.X=2192.681mil|Location1.Y=3745.821mil|Location2.Y=3758.17mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2181.431mil|Location2.X=2192.681mil|Location1.Y=3745.821mil|Location2.Y=3758.17mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.228mm &lt; 0.254mm) Between Pad H9-1(16.44mm,51mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.228mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2188.496mil|Location2.X=2199.746mil|Location1.Y=3805.456mil|Location2.Y=3818.86mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2188.496mil|Location2.X=2199.746mil|Location1.Y=3805.456mil|Location2.Y=3818.86mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.239mm &lt; 0.254mm) Between Pad H9-1(16.44mm,51mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.239mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2185.632mil|Location2.X=2196.882mil|Location1.Y=3753.193mil|Location2.Y=3765.542mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2185.632mil|Location2.X=2196.882mil|Location1.Y=3753.193mil|Location2.Y=3765.542mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.252mm &lt; 0.254mm) Between Pad H9-1(16.44mm,51mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.252mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2227.613mil|Location2.X=2235.28mil|Location1.Y=3799.94mil|Location2.Y=3807.607mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2227.613mil|Location2.X=2235.28mil|Location1.Y=3799.94mil|Location2.Y=3807.607mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (Collision &lt; 0.254mm) Between Pad H9-1(16.44mm,51mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2194.523mil|Location2.X=2202.19mil|Location1.Y=3784.016mil|Location2.Y=3791.683mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2194.523mil|Location2.X=2202.19mil|Location1.Y=3784.016mil|Location2.Y=3791.683mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (Collision &lt; 0.254mm) Between Pad H9-1(16.44mm,51mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2249.489mil|Location2.X=2260.739mil|Location1.Y=3809.719mil|Location2.Y=3820.969mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2249.489mil|Location2.X=2260.739mil|Location1.Y=3809.719mil|Location2.Y=3820.969mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.172mm &lt; 0.254mm) Between Pad H9-1(16.44mm,51mm) on Multi-Layer And Region (102 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.172mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2213.168mil|Location2.X=2224.418mil|Location1.Y=3641.735mil|Location2.Y=3652.985mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2213.168mil|Location2.X=2224.418mil|Location1.Y=3641.735mil|Location2.Y=3652.985mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.133mm &lt; 0.254mm) Between Pad H9-2(16.44mm,48.46mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.133mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2194.405mil|Location2.X=2205.655mil|Location1.Y=3696.312mil|Location2.Y=3708.328mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2194.405mil|Location2.X=2205.655mil|Location1.Y=3696.312mil|Location2.Y=3708.328mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.143mm &lt; 0.254mm) Between Pad H9-2(16.44mm,48.46mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.143mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2180.909mil|Location2.X=2192.159mil|Location1.Y=3677.819mil|Location2.Y=3689.069mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2180.909mil|Location2.X=2192.159mil|Location1.Y=3677.819mil|Location2.Y=3689.069mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.165mm &lt; 0.254mm) Between Pad H9-2(16.44mm,48.46mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.165mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2184.557mil|Location2.X=2195.807mil|Location1.Y=3690.043mil|Location2.Y=3703.589mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2184.557mil|Location2.X=2195.807mil|Location1.Y=3690.043mil|Location2.Y=3703.589mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.166mm &lt; 0.254mm) Between Pad H9-2(16.44mm,48.46mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.166mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2196.547mil|Location2.X=2207.797mil|Location1.Y=3702.905mil|Location2.Y=3714.155mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2196.547mil|Location2.X=2207.797mil|Location1.Y=3702.905mil|Location2.Y=3714.155mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.174mm &lt; 0.254mm) Between Pad H9-2(16.44mm,48.46mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.174mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2194.641mil|Location2.X=2207.558mil|Location1.Y=3644.927mil|Location2.Y=3656.177mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2194.641mil|Location2.X=2207.558mil|Location1.Y=3644.927mil|Location2.Y=3656.177mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.194mm &lt; 0.254mm) Between Pad H9-2(16.44mm,48.46mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.194mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2219.118mil|Location2.X=2230.368mil|Location1.Y=3653.104mil|Location2.Y=3664.354mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2219.118mil|Location2.X=2230.368mil|Location1.Y=3653.104mil|Location2.Y=3664.354mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.217mm &lt; 0.254mm) Between Pad H9-2(16.44mm,48.46mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.217mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2241.918mil|Location2.X=2253.168mil|Location1.Y=3691.949mil|Location2.Y=3703.199mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2241.918mil|Location2.X=2253.168mil|Location1.Y=3691.949mil|Location2.Y=3703.199mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.224mm &lt; 0.254mm) Between Pad H9-2(16.44mm,48.46mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.224mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2222.795mil|Location2.X=2234.045mil|Location1.Y=3641.467mil|Location2.Y=3652.717mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2222.795mil|Location2.X=2234.045mil|Location1.Y=3641.467mil|Location2.Y=3652.717mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.224mm &lt; 0.254mm) Between Pad H9-2(16.44mm,48.46mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.224mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2218.927mil|Location2.X=2230.177mil|Location1.Y=3706.338mil|Location2.Y=3717.588mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2218.927mil|Location2.X=2230.177mil|Location1.Y=3706.338mil|Location2.Y=3717.588mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.227mm &lt; 0.254mm) Between Pad H9-2(16.44mm,48.46mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.227mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2237.837mil|Location2.X=2249.087mil|Location1.Y=3660.585mil|Location2.Y=3671.835mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2237.837mil|Location2.X=2249.087mil|Location1.Y=3660.585mil|Location2.Y=3671.835mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.234mm &lt; 0.254mm) Between Pad H9-2(16.44mm,48.46mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.234mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2211.135mil|Location2.X=2222.385mil|Location1.Y=3698.909mil|Location2.Y=3710.159mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2211.135mil|Location2.X=2222.385mil|Location1.Y=3698.909mil|Location2.Y=3710.159mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.236mm &lt; 0.254mm) Between Pad H9-2(16.44mm,48.46mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.236mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2220.889mil|Location2.X=2233.102mil|Location1.Y=3637.687mil|Location2.Y=3648.937mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2220.889mil|Location2.X=2233.102mil|Location1.Y=3637.687mil|Location2.Y=3648.937mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.23mm &lt; 0.254mm) Between Pad H9-2(16.44mm,48.46mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.23mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2203.406mil|Location2.X=2214.656mil|Location1.Y=3687.595mil|Location2.Y=3698.845mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2203.406mil|Location2.X=2214.656mil|Location1.Y=3687.595mil|Location2.Y=3698.845mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.241mm &lt; 0.254mm) Between Pad H9-2(16.44mm,48.46mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.241mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2252.836mil|Location2.X=2264.086mil|Location1.Y=3682.569mil|Location2.Y=3693.819mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2252.836mil|Location2.X=2264.086mil|Location1.Y=3682.569mil|Location2.Y=3693.819mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.251mm &lt; 0.254mm) Between Pad H9-2(16.44mm,48.46mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.251mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2235.936mil|Location2.X=2248.227mil|Location1.Y=3641.906mil|Location2.Y=3653.156mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2235.936mil|Location2.X=2248.227mil|Location1.Y=3641.906mil|Location2.Y=3653.156mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.253mm &lt; 0.254mm) Between Pad H9-2(16.44mm,48.46mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.253mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2146.564mil|Location2.X=2157.814mil|Location1.Y=3763.486mil|Location2.Y=3774.736mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2146.564mil|Location2.X=2157.814mil|Location1.Y=3763.486mil|Location2.Y=3774.736mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.03mm &lt; 0.254mm) Between Pad H9-3(13.9mm,51mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.03mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2139.108mil|Location2.X=2150.358mil|Location1.Y=3748.2mil|Location2.Y=3759.45mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2139.108mil|Location2.X=2150.358mil|Location1.Y=3748.2mil|Location2.Y=3759.45mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.215mm &lt; 0.254mm) Between Pad H9-3(13.9mm,51mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.215mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2134.945mil|Location2.X=2146.195mil|Location1.Y=3759.832mil|Location2.Y=3771.082mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2134.945mil|Location2.X=2146.195mil|Location1.Y=3759.832mil|Location2.Y=3771.082mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.233mm &lt; 0.254mm) Between Pad H9-3(13.9mm,51mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.233mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2150.091mil|Location2.X=2161.341mil|Location1.Y=3782.42mil|Location2.Y=3793.67mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2150.091mil|Location2.X=2161.341mil|Location1.Y=3782.42mil|Location2.Y=3793.67mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.238mm &lt; 0.254mm) Between Pad H9-3(13.9mm,51mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.238mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2127.12mil|Location2.X=2138.37mil|Location1.Y=3744.529mil|Location2.Y=3755.779mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2127.12mil|Location2.X=2138.37mil|Location1.Y=3744.529mil|Location2.Y=3755.779mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.244mm &lt; 0.254mm) Between Pad H9-3(13.9mm,51mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.244mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2097.034mil|Location2.X=2108.284mil|Location1.Y=3652.975mil|Location2.Y=3664.225mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2097.034mil|Location2.X=2108.284mil|Location1.Y=3652.975mil|Location2.Y=3664.225mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.029mm &lt; 0.254mm) Between Pad H9-4(13.9mm,48.46mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.029mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2098.941mil|Location2.X=2110.191mil|Location1.Y=3653.007mil|Location2.Y=3664.257mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2098.941mil|Location2.X=2110.191mil|Location1.Y=3653.007mil|Location2.Y=3664.257mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.126mm &lt; 0.254mm) Between Pad H9-4(13.9mm,48.46mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.126mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2144.272mil|Location2.X=2157.852mil|Location1.Y=3691.949mil|Location2.Y=3703.199mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2144.272mil|Location2.X=2157.852mil|Location1.Y=3691.949mil|Location2.Y=3703.199mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.157mm &lt; 0.254mm) Between Pad H9-4(13.9mm,48.46mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.157mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2094.038mil|Location2.X=2105.288mil|Location1.Y=3645.979mil|Location2.Y=3657.229mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2094.038mil|Location2.X=2105.288mil|Location1.Y=3645.979mil|Location2.Y=3657.229mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.168mm &lt; 0.254mm) Between Pad H9-4(13.9mm,48.46mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.168mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2100.974mil|Location2.X=2112.224mil|Location1.Y=3668.283mil|Location2.Y=3679.533mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2100.974mil|Location2.X=2112.224mil|Location1.Y=3668.283mil|Location2.Y=3679.533mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.216mm &lt; 0.254mm) Between Pad H9-4(13.9mm,48.46mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.216mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2120.356mil|Location2.X=2131.606mil|Location1.Y=3706.498mil|Location2.Y=3719.519mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2120.356mil|Location2.X=2131.606mil|Location1.Y=3706.498mil|Location2.Y=3719.519mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.221mm &lt; 0.254mm) Between Pad H9-4(13.9mm,48.46mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.221mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2119.956mil|Location2.X=2131.206mil|Location1.Y=3699.227mil|Location2.Y=3710.477mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2119.956mil|Location2.X=2131.206mil|Location1.Y=3699.227mil|Location2.Y=3710.477mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.222mm &lt; 0.254mm) Between Pad H9-4(13.9mm,48.46mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.222mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2100.807mil|Location2.X=2112.057mil|Location1.Y=3694.894mil|Location2.Y=3706.144mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2100.807mil|Location2.X=2112.057mil|Location1.Y=3694.894mil|Location2.Y=3706.144mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.225mm &lt; 0.254mm) Between Pad H9-4(13.9mm,48.46mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.225mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2132.742mil|Location2.X=2143.992mil|Location1.Y=3706.838mil|Location2.Y=3718.088mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2132.742mil|Location2.X=2143.992mil|Location1.Y=3706.838mil|Location2.Y=3718.088mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.226mm &lt; 0.254mm) Between Pad H9-4(13.9mm,48.46mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.226mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2108.242mil|Location2.X=2119.492mil|Location1.Y=3688.077mil|Location2.Y=3699.327mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2108.242mil|Location2.X=2119.492mil|Location1.Y=3688.077mil|Location2.Y=3699.327mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.238mm &lt; 0.254mm) Between Pad H9-4(13.9mm,48.46mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.238mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2143.28mil|Location2.X=2154.53mil|Location1.Y=3648.134mil|Location2.Y=3660.144mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2143.28mil|Location2.X=2154.53mil|Location1.Y=3648.134mil|Location2.Y=3660.144mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.243mm &lt; 0.254mm) Between Pad H9-4(13.9mm,48.46mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.243mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2107.97mil|Location2.X=2119.22mil|Location1.Y=3703.535mil|Location2.Y=3714.785mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2107.97mil|Location2.X=2119.22mil|Location1.Y=3703.535mil|Location2.Y=3714.785mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.248mm &lt; 0.254mm) Between Pad H9-4(13.9mm,48.46mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.248mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2115.494mil|Location2.X=2126.744mil|Location1.Y=3645.255mil|Location2.Y=3656.505mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2115.494mil|Location2.X=2126.744mil|Location1.Y=3645.255mil|Location2.Y=3656.505mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.253mm &lt; 0.254mm) Between Pad H9-4(13.9mm,48.46mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.253mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2146.987mil|Location2.X=2154.653mil|Location1.Y=3685.369mil|Location2.Y=3693.035mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2146.987mil|Location2.X=2154.653mil|Location1.Y=3685.369mil|Location2.Y=3693.035mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (Collision &lt; 0.254mm) Between Pad H9-4(13.9mm,48.46mm) on Multi-Layer And Region (0 hole(s)) Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3091.039mil|Location2.X=3098.706mil|Location1.Y=4708.143mil|Location2.Y=4715.81mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3091.039mil|Location2.X=3098.706mil|Location1.Y=4708.143mil|Location2.Y=4715.81mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (Collision &lt; 0.254mm) Between Pad J1-1(39.5mm,74.044mm) on Multi-Layer And Text "d" (39.838mm,73.028mm) on Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3142.035mil|Location2.X=3153.285mil|Location1.Y=4713.652mil|Location2.Y=4724.902mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3142.035mil|Location2.X=3153.285mil|Location1.Y=4713.652mil|Location2.Y=4724.902mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.151mm &lt; 0.254mm) Between Pad J1-1(39.5mm,74.044mm) on Multi-Layer And Text "n" (41.838mm,73.564mm) on Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.151mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3281.613mil|Location2.X=3289.279mil|Location1.Y=4710.051mil|Location2.Y=4717.717mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3281.613mil|Location2.X=3289.279mil|Location1.Y=4710.051mil|Location2.Y=4717.717mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (Collision &lt; 0.254mm) Between Pad J2-1(43mm,74.044mm) on Multi-Layer And Text "a" (43.634mm,74.046mm) on Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3222.55mil|Location2.X=3233.8mil|Location1.Y=4657.793mil|Location2.Y=4669.043mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3222.55mil|Location2.X=3233.8mil|Location1.Y=4657.793mil|Location2.Y=4669.043mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.254mm &lt; 0.254mm) Between Pad J2-1(43mm,74.044mm) on Multi-Layer And Text "n" (41.838mm,73.564mm) on Bottom Overlay [Bottom Overlay] to [Bottom Solder] clearance [0.254mm]</acronym></a><br></td>
+</tr>
+</table></a><hr color="#EEEEEE"><a href="#top" style="font-size: 0.9em">Back to top</a><br><br><a name="IDXZJK05SN1LLHINSINSSFSUSYHJF0MYLYNAPT1PC2CQ435CL2ZASD"><table>
+<tr>
+<th style="text-align : left" colspan="1" class="rule">Silk to Silk (Clearance=0.254mm) (All),(All)</th>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3309.737mil|Location2.X=3320.987mil|Location1.Y=4886.234mil|Location2.Y=4897.484mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3309.737mil|Location2.X=3320.987mil|Location1.Y=4886.234mil|Location2.Y=4897.484mil|Absolute=True">Silk To Silk Clearance Constraint: (0.105mm &lt; 0.254mm) Between Text "a" (45.06mm,79.503mm) on Bottom Overlay And Text "M" (46.815mm,79.974mm) on Bottom Overlay Silk Text to Silk Clearance [0.105mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3469.276mil|Location2.X=3480.526mil|Location1.Y=4724.651mil|Location2.Y=4735.901mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3469.276mil|Location2.X=3480.526mil|Location1.Y=4724.651mil|Location2.Y=4735.901mil|Absolute=True">Silk To Silk Clearance Constraint: (0.136mm &lt; 0.254mm) Between Text "a" (48.166mm,75.26mm) on Bottom Overlay And Text "L" (49.881mm,75.719mm) on Bottom Overlay Silk Text to Silk Clearance [0.136mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2357.06mil|Location2.X=2368.31mil|Location1.Y=4700.109mil|Location2.Y=4713.801mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2357.06mil|Location2.X=2368.31mil|Location1.Y=4700.109mil|Location2.Y=4713.801mil|Absolute=True">Silk To Silk Clearance Constraint: (0.209mm &lt; 0.254mm) Between Text "b" (22.116mm,73.356mm) on Bottom Overlay And Text "y" (20.36mm,72.885mm) on Bottom Overlay Silk Text to Silk Clearance [0.209mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2454.094mil|Location2.X=2467.472mil|Location1.Y=4518.389mil|Location2.Y=4529.639mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2454.094mil|Location2.X=2467.472mil|Location1.Y=4518.389mil|Location2.Y=4529.639mil|Absolute=True">Silk To Silk Clearance Constraint: (0.202mm &lt; 0.254mm) Between Text "b" (24.201mm,68.839mm) on Bottom Overlay And Text "i" (23.262mm,68.587mm) on Bottom Overlay Silk Text to Silk Clearance [0.202mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2049.001mil|Location2.X=2060.251mil|Location1.Y=2676.788mil|Location2.Y=2688.038mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2049.001mil|Location2.X=2060.251mil|Location1.Y=2676.788mil|Location2.Y=2688.038mil|Absolute=True">Silk To Silk Clearance Constraint: (0.225mm &lt; 0.254mm) Between Text "C28" (12mm,23mm) on Top Overlay And Track (12.4mm,22.4mm)(12.4mm,24.7mm) on Top Overlay Silk Text to Silk Clearance [0.225mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3179.132mil|Location2.X=3190.382mil|Location1.Y=4920.516mil|Location2.Y=4934.224mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3179.132mil|Location2.X=3190.382mil|Location1.Y=4920.516mil|Location2.Y=4934.224mil|Absolute=True">Silk To Silk Clearance Constraint: (0.249mm &lt; 0.254mm) Between Text "d" (43.06mm,78.967mm) on Bottom Overlay And Text "e" (41.222mm,78.475mm) on Bottom Overlay Silk Text to Silk Clearance [0.249mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3818.848mil|Location2.X=3826.515mil|Location1.Y=4823.043mil|Location2.Y=4830.71mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3818.848mil|Location2.X=3826.515mil|Location1.Y=4823.043mil|Location2.Y=4830.71mil|Absolute=True">Silk To Silk Clearance Constraint: (Collision &lt; 0.254mm) Between Text "d" (57.24mm,77.735mm) on Bottom Overlay And Text "r" (58.332mm,77.984mm) on Bottom Overlay Silk Text to Silk Clearance [0mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3910.331mil|Location2.X=3917.997mil|Location1.Y=4919.321mil|Location2.Y=4926.987mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3910.331mil|Location2.X=3917.997mil|Location1.Y=4919.321mil|Location2.Y=4926.987mil|Absolute=True">Silk To Silk Clearance Constraint: (Collision &lt; 0.254mm) Between Text "G" (61.802mm,78.914mm) on Bottom Overlay And Text "o" (60.006mm,78.432mm) on Bottom Overlay Silk Text to Silk Clearance [0mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2937.647mil|Location2.X=2948.897mil|Location1.Y=4881.259mil|Location2.Y=4892.509mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2937.647mil|Location2.X=2948.897mil|Location1.Y=4881.259mil|Location2.Y=4892.509mil|Absolute=True">Silk To Silk Clearance Constraint: (0.12mm &lt; 0.254mm) Between Text "i" (35.895mm,76.816mm) on Bottom Overlay And Text "t" (35.303mm,76.889mm) on Bottom Overlay Silk Text to Silk Clearance [0.12mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2978.167mil|Location2.X=2989.417mil|Location1.Y=4822.813mil|Location2.Y=4834.063mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2978.167mil|Location2.X=2989.417mil|Location1.Y=4822.813mil|Location2.Y=4834.063mil|Absolute=True">Silk To Silk Clearance Constraint: (0.234mm &lt; 0.254mm) Between Text "i" (35.895mm,76.816mm) on Bottom Overlay And Text "w" (37.875mm,77.578mm) on Bottom Overlay Silk Text to Silk Clearance [0.234mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2702.015mil|Location2.X=2713.265mil|Location1.Y=4720.144mil|Location2.Y=4731.394mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2702.015mil|Location2.X=2713.265mil|Location1.Y=4720.144mil|Location2.Y=4731.394mil|Absolute=True">Silk To Silk Clearance Constraint: (0.224mm &lt; 0.254mm) Between Text "L" (30.444mm,75.587mm) on Bottom Overlay And Text "o" (28.648mm,75.106mm) on Bottom Overlay Silk Text to Silk Clearance [0.224mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2055.272mil|Location2.X=2069.008mil|Location1.Y=3057.845mil|Location2.Y=3069.095mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2055.272mil|Location2.X=2069.008mil|Location1.Y=3057.845mil|Location2.Y=3069.095mil|Absolute=True">Silk To Silk Clearance Constraint: (0.237mm &lt; 0.254mm) Between Text "L3" (11.1mm,33mm) on Top Overlay And Track (12.4mm,30.1mm)(12.4mm,32.6mm) on Top Overlay Silk Text to Silk Clearance [0.237mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2006.186mil|Location2.X=2017.436mil|Location1.Y=3057.86mil|Location2.Y=3069.11mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2006.186mil|Location2.X=2017.436mil|Location1.Y=3057.86mil|Location2.Y=3069.11mil|Absolute=True">Silk To Silk Clearance Constraint: (0.225mm &lt; 0.254mm) Between Text "L3" (11.1mm,33mm) on Top Overlay And Track (2.2mm,32.6mm)(12.4mm,32.6mm) on Top Overlay Silk Text to Silk Clearance [0.225mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2637.53mil|Location2.X=2648.78mil|Location1.Y=4703.683mil|Location2.Y=4714.933mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2637.53mil|Location2.X=2648.78mil|Location1.Y=4703.683mil|Location2.Y=4714.933mil|Absolute=True">Silk To Silk Clearance Constraint: (0.21mm &lt; 0.254mm) Between Text "o" (28.648mm,75.106mm) on Bottom Overlay And Text "v" (27.015mm,74.668mm) on Bottom Overlay Silk Text to Silk Clearance [0.21mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3852.705mil|Location2.X=3863.955mil|Location1.Y=4903.731mil|Location2.Y=4914.981mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3852.705mil|Location2.X=3863.955mil|Location1.Y=4903.731mil|Location2.Y=4914.981mil|Absolute=True">Silk To Silk Clearance Constraint: (0.251mm &lt; 0.254mm) Between Text "o" (60.006mm,78.432mm) on Bottom Overlay And Text "r" (58.332mm,77.984mm) on Bottom Overlay Silk Text to Silk Clearance [0.251mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2625.75mil|Location2.X=2637mil|Location1.Y=4573.149mil|Location2.Y=4586.847mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2625.75mil|Location2.X=2637mil|Location1.Y=4573.149mil|Location2.Y=4586.847mil|Absolute=True">Silk To Silk Clearance Constraint: (0.227mm &lt; 0.254mm) Between Text "P" (28.855mm,70.086mm) on Bottom Overlay And Text "r" (27.182mm,69.637mm) on Bottom Overlay Silk Text to Silk Clearance [0.227mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3035.719mil|Location2.X=3046.969mil|Location1.Y=3809.336mil|Location2.Y=3820.586mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3035.719mil|Location2.X=3046.969mil|Location1.Y=3809.336mil|Location2.Y=3820.586mil|Absolute=True">Silk To Silk Clearance Constraint: (0.15mm &lt; 0.254mm) Between Text "R3" (38.2mm,51.8mm) on Top Overlay And Text "R4" (37.1mm,51.9mm) on Top Overlay Silk Text to Silk Clearance [0.15mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2446.108mil|Location2.X=2457.358mil|Location1.Y=4919.567mil|Location2.Y=4930.817mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2446.108mil|Location2.X=2457.358mil|Location1.Y=4919.567mil|Location2.Y=4930.817mil|Absolute=True">Silk To Silk Clearance Constraint: (0.198mm &lt; 0.254mm) Between Text "S4" (22.1mm,79.7mm) on Top Overlay And Track (22.5mm,77.45mm)(22.5mm,83.45mm) on Top Overlay Silk Text to Silk Clearance [0.198mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2302.772mil|Location2.X=2314.022mil|Location1.Y=2880.794mil|Location2.Y=2892.044mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2302.772mil|Location2.X=2314.022mil|Location1.Y=2880.794mil|Location2.Y=2892.044mil|Absolute=True">Silk To Silk Clearance Constraint: (0.22mm &lt; 0.254mm) Between Text "U7" (18.5mm,28.5mm) on Top Overlay And Track (16.879mm,28.129mm)(21.121mm,28.129mm) on Top Overlay Silk Text to Silk Clearance [0.22mm]</acronym></a><br></td>
+</tr>
+</table></a><hr color="#EEEEEE"><a href="#top" style="font-size: 0.9em">Back to top</a><br><br><a name="IDB0HWAHOXODA3IVYNTB1MQWNFTMGQFJTBURU5D3KDYJT3CE3C2QSF"><table>
+<tr>
+<th style="text-align : left" colspan="1" class="rule">Board Clearance Constraint (Gap=0mm) (All)</th>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1565.692mil|Location2.X=1613.645mil|Location1.Y=3177.978mil|Location2.Y=3192.102mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1565.692mil|Location2.X=1613.645mil|Location1.Y=3177.978mil|Location2.Y=3192.102mil|Absolute=True">Board Outline Clearance(Outline Edge): (Collision &lt; 0.5mm) Between Board Edge And Track (-0.05mm,35.9mm)(0.175mm,35.9mm) on Top Overlay </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1565.692mil|Location2.X=1613.645mil|Location1.Y=3453.568mil|Location2.Y=3467.691mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=P:\Courses\ENCE461\wacky-racers\altium\Wacky Hat\wacky_hat_pcb.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1565.692mil|Location2.X=1613.645mil|Location1.Y=3453.568mil|Location2.Y=3467.691mil|Absolute=True">Board Outline Clearance(Outline Edge): (Collision &lt; 0.5mm) Between Board Edge And Track (-0.05mm,42.9mm)(0.175mm,42.9mm) on Top Overlay </acronym></a><br></td>
+</tr>
+</table></a><hr color="#EEEEEE"><a href="#top" style="font-size: 0.9em">Back to top</a><br><br></body>
+</html>
