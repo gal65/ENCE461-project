@@ -55,7 +55,7 @@ GenerateClassCluster=0
 DocumentUniqueId=YTUVHIRK
 
 [Document2]
-DocumentPath=wacky_hat_pcb.PcbDoc
+DocumentPath=wacky_hat_pcb_group_31.PcbDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
 AnnotationIndexControlEnabled=0
@@ -73,6 +73,10 @@ DocumentUniqueId=HQNNYSUC
 
 [GeneratedDocument1]
 DocumentPath=Project Outputs for Wacky Hat\Design Rule Check - wacky_hat_pcb.html
+DItemRevisionGUID=
+
+[GeneratedDocument2]
+DocumentPath=Project Outputs for Wacky Hat\Design Rule Check - wacky_hat_pcb_group_31.html
 DItemRevisionGUID=
 
 [Configuration1]
