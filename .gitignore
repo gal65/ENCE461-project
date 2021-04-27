@@ -2,10 +2,10 @@
 *.o
 *.map
 *.bin
-*.LOG
 *.log
 
 History
 
 **/Project Logs for Wacky Hat/
 **/Project Logs for Wacky Racer/
+.vscode/
