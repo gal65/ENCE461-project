@@ -3,17 +3,22 @@
    Date:   15 May 2007
    Descr:  Flash an LED
 */
-#include <pio.h>
-#include "target.h"
 #include "pacer.h"
+#include "target.h"
+#include <pio.h>
 
 /* Define how fast ticks occur.  This must be faster than
    TICK_RATE_MIN.  */
-enum {LOOP_POLL_RATE = 200};
+enum
+{
+  LOOP_POLL_RATE = 200
+};
 
 /* Define LED flash rate in Hz.  */
-enum {LED_FLASH_RATE = 2};
-
+enum
+{
+  LED_FLASH_RATE = 80
+};
 
 /*
     This test app is the faithful blinky program. It works as follows:
@@ -34,30 +39,31 @@ enum {LED_FLASH_RATE = 2};
     * Make two LEDs blink at two separate frequencies.
 */
 
-
 int
-main (void)
+main(void)
 {
-    uint8_t flash_ticks;
+  uint8_t flash_ticks;
 
-    /* Configure LED PIO as output.  */
-    pio_config_set (LED1_PIO, PIO_OUTPUT_LOW);
+  /* Configure LED PIO as output.  */
+  pio_config_set(LED1_PIO, PIO_OUTPUT_LOW);
+  pio_config_set(LED2_PIO, PIO_OUTPUT_LOW);
+  pio_config_set(PA27_PIO, PIO_OUTPUT_LOW);
 
-    pacer_init (LOOP_POLL_RATE);
-    flash_ticks = 0;
+  pacer_init(LOOP_POLL_RATE);
+  flash_ticks = 0;
 
-    while (1)
-    {
-        /* Wait until next clock tick.  */
-        pacer_wait ();
+  while (1) {
+    /* Wait until next clock tick.  */
+    pacer_wait();
 
-        flash_ticks++;
-        if (flash_ticks >= LOOP_POLL_RATE / (LED_FLASH_RATE * 2))
-        {
-            flash_ticks = 0;
+    flash_ticks++;
+    if (flash_ticks >= LOOP_POLL_RATE / (LED_FLASH_RATE * 2)) {
+      flash_ticks = 0;
 
-            /* Toggle LED.  */
-            pio_output_toggle (LED1_PIO);
-        }
+      /* Toggle LED.  */
+      pio_output_toggle(LED1_PIO);
+      pio_output_toggle(LED2_PIO);
+      pio_output_toggle(PA27_PIO);
     }
+  }
 }
