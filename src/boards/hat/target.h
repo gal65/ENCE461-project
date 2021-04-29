@@ -30,27 +30,30 @@
 #define USB_CURRENT_MA 500
 
 /* ADC  */
-#define ADC_BATTERY PB3_PIO
-#define ADC_JOYSTICK_X PB2_PIO
-#define ADC_JOYSTICK_Y PB1_PIO
+#define ADC_BATTERY PA31_PIO
+#define ADC_JOYSTICK_X PA17_PIO
+#define ADC_JOYSTICK_Y PA18_PIO
 
 /* IMU  */
+// NOT CONNECTED
 #define IMU_INT_PIO PA0_PIO
 
 /* LEDs  */
-#define LED1_PIO PA20_PIO
-#define LED2_PIO PA23_PIO
+#define LED1_PIO PA0_PIO
+#define LED2_PIO PA1_PIO
 
 /* General  */
+// NOT CONNECTED
 #define APPENDAGE_PIO PA1_PIO
+// NOT CONNECTED
 #define SERVO_PWM_PIO PA2_PIO
 
 /* Button  */
-#define BUTTON_PIO PA16_PIO
+#define BUTTON_PIO PA2_PIO
 
 /* Radio  */
-#define RADIO_CS_PIO PA10_PIO
-#define RADIO_CE_PIO PA9_PIO
+#define RADIO_CS_PIO PA11_PIO
+#define RADIO_CE_PIO PA29_PIO
 #define RADIO_IRQ_PIO PA15_PIO
 
 
