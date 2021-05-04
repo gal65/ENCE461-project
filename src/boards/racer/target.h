@@ -29,8 +29,8 @@
 #define USB_CURRENT_MA 500
 
 /* LEDs  */
-#define LED1_PIO PA20_PIO
-#define LED2_PIO PA23_PIO
+#define LED1_PIO PA1_PIO
+#define LED2_PIO PA0_PIO
 
 /* General  */
 #define APPENDAGE_PIO PA1_PIO
@@ -46,7 +46,7 @@
 #define MOTOR_RIGHT_PWM_PIO PA7_PIO
 #define MOTOR_RIGHT_PHASE_PIO PA6_PIO
 #define MOTOR_RIGHT_MODE_PIO PA28_PIO
-#define MOTOR_SLEEP_PIO PA5_PIO
+#define MOTOR_SLEEP_PIO PA29_PIO
 
 /* Radio  */
 #define RADIO_CS_PIO PA10_PIO

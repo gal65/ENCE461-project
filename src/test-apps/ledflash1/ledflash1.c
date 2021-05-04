@@ -42,6 +42,7 @@ main (void)
 
     /* Configure LED PIO as output.  */
     pio_config_set (LED1_PIO, PIO_OUTPUT_LOW);
+    pio_config_set (LED2_PIO, PIO_OUTPUT_LOW);
 
     pacer_init (LOOP_POLL_RATE);
     flash_ticks = 0;
@@ -58,6 +59,7 @@ main (void)
 
             /* Toggle LED.  */
             pio_output_toggle (LED1_PIO);
+            pio_output_toggle (LED2_PIO);
         }
     }
 }
