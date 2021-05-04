@@ -1,0 +1,1 @@
+%windir%\System32\cmd.exe /k c:\ence461\ence461-path.bat
