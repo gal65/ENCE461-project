@@ -7,11 +7,16 @@
 #include "pwm.h"
 #include "pio.h"
 
-
+//AIN1
 #define PWM1_PIO PA20_PIO
+//AIN2
 #define PWM2_PIO PA19_PIO
-#define PWM3_PIO PA18_PIO
+//BIN1
+#define PWM3_PIO PA16_PIO
+//BIN2
 #define PWM4_PIO PA17_PIO
+//nSLEEP
+#define nSLP_PIO PA29_PIO
 
 #define PWM_FREQ_HZ 100e3
 
@@ -70,25 +75,26 @@ main (void)
     pwm3 = pwm_init (&pwm3_cfg);
     pwm4 = pwm_init (&pwm4_cfg);
 
-    pwm_channels_start (pwm_channel_mask (pwm1) | pwm_channel_mask (pwm2)
+    pwm_channels_start (pwm_channel_mask (pwm1) | pwm_channel_mask (pwm2) | pwm_channel_mask (pwm3) | pwm_channel_mask (pwm4)
     );
-    int i = 0;
-    int pwm = 0;
+    pio_config_set(nSLP_PIO, PIO_OUTPUT_HIGH);
+ 
     while (1){
-        
-        i++;
-        if (i % 2000000 == 0 ){
-            pwm_duty_set(pwm1, pwm);
-            pwm = pwm + 100;
+            //Forward PWM, fast decay
+            pio_config_set(PWM2_PIO, PIO_OUTPUT_LOW);
+            pio_config_set(PWM4_PIO, PIO_OUTPUT_LOW);
+            
+            //Forward PWM, slow decay
+            //pio_config_set(PWM1_PIO, PIO_OUTPUT_HIGH);
+            //pio_config_set(PWM3_PIO, PIO_OUTPUT_HIGH);
+            
+            //Reverse PWM, fast decay
+            //pio_config_set(PWM1_PIO, PIO_OUTPUT_LOW);
+            //pio_config_set(PWM3_PIO, PIO_OUTPUT_LOW);
 
-        }
-        if (pwm == 1000){
-            pwm = 0;
-        }
-        //if (i == 2000000){
-        //    pwm_duty_set(pwm1, 0);
-
-        //}
+            //Reverse PWM, slow decay
+            //pio_config_set(PWM2_PIO, PIO_OUTPUT_HIGH);
+            //pio_config_set(PWM4_PIO, PIO_OUTPUT_HIGH);
     }
         
     
