@@ -94,21 +94,17 @@ main (void)
     pacer_init (LOOP_POLL_RATE);
     flash_ticks = 0;
     
-    pwm_channels_start (pwm_channel_mask (pwm1));
 
-    //pwm_channels_start (pwm_channel_mask (pwm1) | pwm_channel_mask (pwm2) | pwm_channel_mask (pwm3) | pwm_channel_mask (pwm4)    );
+    pwm_channels_start (pwm_channel_mask (pwm1) | pwm_channel_mask (pwm2) | pwm_channel_mask (pwm3) | pwm_channel_mask (pwm4)    );
 
     pio_config_set(nSLP_PIO, PIO_OUTPUT_HIGH);
 
-    //Forward PWM, fast decay
-        pwm_duty_set(pwm1, 500);
-        pio_config_set(PWM2_PIO, PIO_OUTPUT_HIGH);
-       // pwm_frequency_set(PWM3_PIO, 50);
-       // pio_config_set(PWM4_PIO, PIO_OUTPUT_LOW);
- 
+
+    int pwm = 0;
     while (1){
         /* Wait until next clock tick.  */
         pacer_wait ();
+        pwm++;
 
         flash_ticks++;
         if (flash_ticks >= LOOP_POLL_RATE / (LED_FLASH_RATE * 2))
@@ -119,7 +115,37 @@ main (void)
             pio_output_toggle (LED1_PIO);
             pio_output_toggle (LED2_PIO);
         }
-        
+        //Forward PWM, fast decay
+        if(pwm < 2000){
+            pwm_duty_set(pwm1, 800);
+            pio_config_set(PWM2_PIO, PIO_OUTPUT_LOW);
+            pwm_duty_set(pwm3, 800);
+            pio_config_set(PWM4_PIO, PIO_OUTPUT_LOW);
+        }
+        if(pwm>2000 && pwm<4000){
+            pwm_duty_set(pwm1, 700);
+            pio_config_set(PWM2_PIO, PIO_OUTPUT_HIGH);
+            pwm_duty_set(pwm3, 700);
+            pio_config_set(PWM4_PIO, PIO_OUTPUT_HIGH);
+
+        }
+        if(pwm>4000 && pwm < 6000){
+            pwm_duty_set(pwm1, 500);
+            pio_config_set(PWM2_PIO, PIO_OUTPUT_HIGH);
+            pwm_duty_set(pwm3, 500);
+            pio_config_set(PWM4_PIO, PIO_OUTPUT_HIGH);
+
+        }
+        if(pwm>6000&& pwm<8000){
+            pwm_duty_set(pwm1, 0);
+            pio_config_set(PWM2_PIO, PIO_OUTPUT_LOW);
+            pwm_duty_set(pwm3, 0);
+            pio_config_set(PWM4_PIO, PIO_OUTPUT_LOW);
+
+        }
+        if (pwm>8000){
+            pwm = 0;
+        }
         
         //Forward PWM, slow decay
         //pio_config_set(PWM1_PIO, PIO_OUTPUT_HIGH);
