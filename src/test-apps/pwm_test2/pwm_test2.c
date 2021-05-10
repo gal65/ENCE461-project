@@ -28,14 +28,14 @@
 enum {LOOP_POLL_RATE = 200};
 
 /* Define LED flash rate in Hz.  */
-enum {LED_FLASH_RATE = 2};
+enum {LED_FLASH_RATE = 1};
 
 
 static const pwm_cfg_t pwm1_cfg =
 {
     .pio = PWM1_PIO,
     .period = PWM_PERIOD_DIVISOR (PWM_FREQ_HZ),
-    .duty = PWM_DUTY_DIVISOR (PWM_FREQ_HZ, 80),
+    .duty = PWM_DUTY_DIVISOR (PWM_FREQ_HZ, 50),
     .align = PWM_ALIGN_LEFT,
     .polarity = PWM_POLARITY_LOW,
     .stop_state = PIO_OUTPUT_LOW
@@ -55,7 +55,7 @@ static const pwm_cfg_t pwm3_cfg =
 {
     .pio = PWM3_PIO,
     .period = PWM_PERIOD_DIVISOR (PWM_FREQ_HZ),
-    .duty = PWM_DUTY_DIVISOR (PWM_FREQ_HZ, 80),
+    .duty = PWM_DUTY_DIVISOR (PWM_FREQ_HZ, 50),
     .align = PWM_ALIGN_LEFT,
     .polarity = PWM_POLARITY_LOW,
     .stop_state = PIO_OUTPUT_LOW
@@ -93,10 +93,18 @@ main (void)
 
     pacer_init (LOOP_POLL_RATE);
     flash_ticks = 0;
+    
+    pwm_channels_start (pwm_channel_mask (pwm1));
 
-    pwm_channels_start (pwm_channel_mask (pwm1) | pwm_channel_mask (pwm2) | pwm_channel_mask (pwm3) | pwm_channel_mask (pwm4)
-    );
+    //pwm_channels_start (pwm_channel_mask (pwm1) | pwm_channel_mask (pwm2) | pwm_channel_mask (pwm3) | pwm_channel_mask (pwm4)    );
+
     pio_config_set(nSLP_PIO, PIO_OUTPUT_HIGH);
+
+    //Forward PWM, fast decay
+        pwm_duty_set(pwm1, 500);
+        pio_config_set(PWM2_PIO, PIO_OUTPUT_HIGH);
+       // pwm_frequency_set(PWM3_PIO, 50);
+       // pio_config_set(PWM4_PIO, PIO_OUTPUT_LOW);
  
     while (1){
         /* Wait until next clock tick.  */
@@ -111,11 +119,7 @@ main (void)
             pio_output_toggle (LED1_PIO);
             pio_output_toggle (LED2_PIO);
         }
-        //Forward PWM, fast decay
-        pwm_frequency_set(PWM1_PIO, 50);
-        pio_config_set(PWM2_PIO, PIO_OUTPUT_LOW);
-        pwm_frequency_set(PWM3_PIO, 50);
-        pio_config_set(PWM4_PIO, PIO_OUTPUT_LOW);
+        
         
         //Forward PWM, slow decay
         //pio_config_set(PWM1_PIO, PIO_OUTPUT_HIGH);
