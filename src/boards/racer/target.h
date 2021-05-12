@@ -49,8 +49,8 @@
 #define MOTOR_SLEEP_PIO PA29_PIO
 
 /* Radio  */
-#define RADIO_CS_PIO PA10_PIO
-#define RADIO_CE_PIO PA9_PIO
+#define RADIO_CS_PIO PA11_PIO
+#define RADIO_CE_PIO PA23_PIO
 #define RADIO_IRQ_PIO PA15_PIO
 
 

@@ -9,6 +9,10 @@
 #include "stdio.h"
 #include "delay.h"
 
+#define RADIO_CS_PIO PA11_PIO
+#define RADIO_CE_PIO PA23_PIO
+#define RADIO_IRQ_PIO PA15_PIO 
+
 static void panic(void)
 {
     while (1) {
@@ -47,7 +51,7 @@ int main (void)
         panic();
 
     // initialize the NRF24 radio with its unique 5 byte address
-    if (!nrf24_begin(nrf, 4, 0x0123456789, 32))
+    if (!nrf24_begin(nrf, 120, 0x0123456789, 32))
         panic();
 
     while (1)
