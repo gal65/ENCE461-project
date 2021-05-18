@@ -18,7 +18,7 @@ static void panic(void)
     while (1) {
         pio_output_toggle(LED1_PIO);
         pio_output_toggle(LED2_PIO);
-        delay_ms(400);
+        delay_ms(1000);
     }
 }
 
@@ -51,7 +51,7 @@ int main (void)
         panic();
 
     // initialize the NRF24 radio with its unique 5 byte address
-    if (!nrf24_begin(nrf, 120, 0x0123456789, 32))
+    if (!nrf24_begin(nrf, 4, 0x0123456789, 32))
         panic();
 
     while (1)
