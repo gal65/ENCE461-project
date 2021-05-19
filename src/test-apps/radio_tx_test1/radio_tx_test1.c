@@ -9,9 +9,9 @@
 #include "stdio.h"
 #include "delay.h"
 
-#define RADIO_CS_PIO PA11_PIO
-#define RADIO_CE_PIO PA23_PIO
-#define RADIO_IRQ_PIO PA15_PIO 
+//#define RADIO_CS_PIO PA11_PIO
+//#define RADIO_CE_PIO PA23_PIO
+//#define RADIO_IRQ_PIO PA15_PIO 
 
 static void panic(void)
 {
@@ -51,7 +51,7 @@ int main (void)
         panic();
 
     // initialize the NRF24 radio with its unique 5 byte address
-    if (!nrf24_begin(nrf, 120, 0x0123456789, 32))
+    if (!nrf24_begin(nrf, 4, 0x0123456789, 32))
         panic();
 
     while (1)
@@ -62,7 +62,7 @@ int main (void)
         pio_output_toggle(LED2_PIO);
         pio_output_set(LED1_PIO, 1);
 
-        sprintf (buffer, "Hello world %d\r\n", count++);
+        sprintf (buffer, "test123 %d\r\n", count++);
 
         if (! nrf24_write(nrf, buffer, sizeof (buffer)))
             pio_output_set(LED1_PIO, 0);

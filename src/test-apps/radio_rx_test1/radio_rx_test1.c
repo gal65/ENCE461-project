@@ -7,6 +7,7 @@
 #include "usb_serial.h"
 #include "pio.h"
 #include "delay.h"
+#include "target.h"
 
 static void panic(void)
 {
@@ -32,8 +33,8 @@ int main (void)
     usb_cdc_t usb_cdc;
 
     /* Configure LED PIO as output.  */
-    pio_config_set(LED1_PIO, PIO_OUTPUT_LOW);
-    pio_config_set(LED2_PIO, PIO_OUTPUT_LOW);
+    pio_config_set(LED1_PIO, PIO_OUTPUT_HIGH); //yellow
+    pio_config_set(LED2_PIO, PIO_OUTPUT_LOW); //green
 
     // Create non-blocking tty device for USB CDC connection.
     usb_serial_init(NULL, "/dev/usb_tty");
@@ -47,7 +48,7 @@ int main (void)
         panic();
 
     // initialize the NRF24 radio with its unique 5 byte address
-    if (!nrf24_begin(nrf, 4, 0x0123456789, 32))
+    if (!nrf24_begin(nrf, 117, 0x0123456789, 32))
         panic();
     if (!nrf24_listen(nrf))
         panic();
@@ -55,10 +56,9 @@ int main (void)
     while (1)
     {
         char buffer[32];
-
         if (nrf24_read(nrf, buffer, sizeof(buffer))) {
             printf("%s\n", buffer);
-            pio_output_toggle(LED2_PIO);
+            //pio_output_toggle(LED2_PIO);
             pio_output_toggle(LED1_PIO);
         }
     }

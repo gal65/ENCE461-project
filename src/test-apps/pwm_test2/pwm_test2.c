@@ -8,6 +8,14 @@
 #include "pio.h"
 #include "target.h"
 #include "pacer.h"
+//radio
+#include "nrf24.h"
+#include "stdio.h"
+#include "delay.h"
+#include "usb_serial.h"
+
+
+
 
 //AIN1
 #define PWM1_PIO PA20_PIO
@@ -108,6 +116,16 @@ void driving_motor(pwm_t pwm1, pio_t AN2 , pwm_t pwm3,  pio_t BN2){
     
 }
 
+//paninc function for the radio
+static void panic(void)
+{
+    while (1) {
+        pio_output_toggle(LED1_PIO);
+        pio_output_toggle(LED2_PIO);
+        delay_ms(400);
+    }
+}
+
 int
 main (void)
 {
@@ -130,13 +148,37 @@ main (void)
     pacer_init (LOOP_POLL_RATE);
     flash_ticks = 0;
     
-
+    //Start pwm channels
     pwm_channels_start (pwm_channel_mask (pwm1) | pwm_channel_mask (pwm2) | pwm_channel_mask (pwm3) | pwm_channel_mask (pwm4)    );
-
     pio_config_set(nSLP_PIO, PIO_OUTPUT_HIGH);
 
+    //radio part
+    spi_cfg_t nrf_spi = {
+        .channel = 0,
+        .clock_speed_kHz = 1000,
+        .cs = RADIO_CS_PIO,
+        .mode = SPI_MODE_0,
+        .cs_mode = SPI_CS_MODE_FRAME,
+        .bits = 8,
+    };
+    nrf24_t *nrf;
+    spi_t spi;
+    usb_cdc_t usb_cdc;
+    usb_serial_init(NULL, "/dev/usb_tty");
 
-    //int pwm = 0;
+    freopen("/dev/usb_tty", "a", stdout);
+    freopen("/dev/usb_tty", "r", stdin);
+    spi = spi_init(&nrf_spi);
+    nrf = nrf24_create(spi, RADIO_CE_PIO, RADIO_IRQ_PIO);
+    if (!nrf)
+        panic();
+
+    // initialize the NRF24 radio with its unique 5 byte address
+    if (!nrf24_begin(nrf, 4, 0x0123456789, 32))
+        panic();
+    if (!nrf24_listen(nrf))
+        panic();
+
     while (1){
 
 
@@ -151,6 +193,13 @@ main (void)
             /* Toggle LED.  */
             pio_output_toggle (LED1_PIO);
             pio_output_toggle (LED2_PIO);
+        }
+
+        char buffer[32];
+        if (nrf24_read(nrf, buffer, sizeof(buffer))) {
+            printf("%s\n", buffer);
+            //pio_output_toggle(LED2_PIO);
+            pio_output_toggle(LED1_PIO);
         }
 
         driving_motor(pwm1, PWM2_PIO, pwm3, PWM4_PIO);

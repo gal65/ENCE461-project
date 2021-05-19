@@ -1,6 +1,6 @@
 PERIPHERALS = pwm pit
 
-DRIVERS = led pacer
+DRIVERS = led pacer usb_serial rf
 
 TARGET = pwm_test2.bin
 
