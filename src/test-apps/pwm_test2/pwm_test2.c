@@ -11,6 +11,7 @@
 //radio
 #include "nrf24.h"
 #include "stdio.h"
+#include <stdlib.h>
 #include "delay.h"
 #include "usb_serial.h"
 
@@ -79,41 +80,63 @@ static const pwm_cfg_t pwm4_cfg =
     .stop_state = PIO_OUTPUT_LOW
 };
 
-int state = 0;
-void driving_motor(pwm_t pwm1, pio_t AN2 , pwm_t pwm3,  pio_t BN2){
-    
-    if(state < 2000){
+
+void driving_motor1(int x, pwm_t pwm1, pio_t AN2 , pwm_t pwm3,  pio_t BN2){
+    int state = 0;
+    if(x == 0){
+        state++;
+    }
+    if(state < 5){
     pwm_duty_set(pwm1, 800);
     pio_config_set(AN2, PIO_OUTPUT_LOW);
     pwm_duty_set(pwm3, 800);
-    pio_config_set(BN2, PIO_OUTPUT_LOW);
+    pio_config_set(BN2, PIO_OUTPUT_LOW);//forward
     }
-    if(state>2000 && state<4000){
+    if(state>=5 && state<10){
         pwm_duty_set(pwm1, 700);
         pio_config_set(AN2, PIO_OUTPUT_HIGH);
         pwm_duty_set(pwm3, 700);
-        pio_config_set(BN2, PIO_OUTPUT_HIGH);
+        pio_config_set(BN2, PIO_OUTPUT_HIGH);//backward
 
     }
-    if(state>4000 && state < 6000){
-        pwm_duty_set(pwm1, 500);
-        pio_config_set(AN2, PIO_OUTPUT_HIGH);
-        pwm_duty_set(pwm3, 500);
-        pio_config_set(BN2, PIO_OUTPUT_HIGH);
+    //if(state>4000 && state < 6000){
+        //pwm_duty_set(pwm1, 500);
+        //pio_config_set(AN2, PIO_OUTPUT_HIGH);
+        //pwm_duty_set(pwm3, 500);
+        //pio_config_set(BN2, PIO_OUTPUT_HIGH);
 
-    }
-    if(state>6000&& state<8000){
+    //}
+    if(state>=10){
         pwm_duty_set(pwm1, 0);
         pio_config_set(AN2, PIO_OUTPUT_LOW);
         pwm_duty_set(pwm3, 0);
-        pio_config_set(BN2, PIO_OUTPUT_LOW);
+        pio_config_set(BN2, PIO_OUTPUT_LOW);//stop
 
     }
-    if(state > 8000){
-        state = 0;
-    }
-    state++;
     
+}
+
+void driving_motor2(int x, pwm_t pwm1, pio_t AN2 , pwm_t pwm3,  pio_t BN2){
+    
+    if(x > 500){
+        pwm_duty_set(pwm1, 800);
+        pio_config_set(AN2, PIO_OUTPUT_LOW);
+        pwm_duty_set(pwm3, 800);
+        pio_config_set(BN2, PIO_OUTPUT_LOW); //forward
+    }
+    else if(x < -500){
+        pwm_duty_set(pwm1, 500);
+        pio_config_set(AN2, PIO_OUTPUT_HIGH);
+        pwm_duty_set(pwm3, 500);
+        pio_config_set(BN2, PIO_OUTPUT_HIGH);//backward
+    }else{
+        pwm_duty_set(pwm1, 0);
+        pio_config_set(AN2, PIO_OUTPUT_LOW);
+        pwm_duty_set(pwm3, 0);
+        pio_config_set(BN2, PIO_OUTPUT_LOW);//stop
+    }
+    
+
 }
 
 //paninc function for the radio
@@ -178,10 +201,10 @@ main (void)
         panic();
     if (!nrf24_listen(nrf))
         panic();
-
+    int state = 0;
     while (1){
 
-
+        
         /* Wait until next clock tick.  */
         pacer_wait ();
 
@@ -197,13 +220,43 @@ main (void)
 
         char buffer[32];
         if (nrf24_read(nrf, buffer, sizeof(buffer))) {
-            printf("%.3s\n", &buffer[12]);
-            //printf("%s\n", buffer[1]);
+            //printf("%.3s\n", &buffer[12]);
+            //printf("%d\n", atoi(&buffer[12]));
             //pio_output_toggle(LED2_PIO);
             pio_output_toggle(LED1_PIO);
+            
+        }
+        int x = atoi(&buffer[12]);
+        printf("%d\n", x);
+        if(x==0){
+            state++;
+            printf("state= %d\n", state);
+            
+        }
+        
+        if(state < 5){
+            pwm_duty_set(pwm1, 800);
+            pio_config_set(PWM2_PIO, PIO_OUTPUT_LOW);
+            pwm_duty_set(pwm3, 800);
+            pio_config_set(PWM4_PIO, PIO_OUTPUT_LOW);//forward
+        }
+        if(state > 5 && state <= 10){
+            pwm_duty_set(pwm1, 800);
+            pio_config_set(PWM2_PIO, PIO_OUTPUT_HIGH);
+            pwm_duty_set(pwm3, 800);
+            pio_config_set(PWM4_PIO, PIO_OUTPUT_HIGH);//forward
+        }
+        if(state > 10){
+            pwm_duty_set(pwm1, 0);
+            pio_config_set(PWM2_PIO, PIO_OUTPUT_LOW);
+            pwm_duty_set(pwm3, 0);
+            pio_config_set(PWM4_PIO, PIO_OUTPUT_LOW);//stop
+
         }
 
-        driving_motor(pwm1, PWM2_PIO, pwm3, PWM4_PIO);
+
+        //driving_motor1(x, pwm1, PWM2_PIO, pwm3, PWM4_PIO);
+        //driving_motor2(x, pwm1, PWM2_PIO, pwm3, PWM4_PIO);
 
     }
         
