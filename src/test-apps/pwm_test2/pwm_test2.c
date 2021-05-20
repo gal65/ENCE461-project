@@ -197,26 +197,14 @@ main (void)
 
         char buffer[32];
         if (nrf24_read(nrf, buffer, sizeof(buffer))) {
-            printf("%s\n", buffer);
+            printf("%.3s\n", &buffer[12]);
+            //printf("%s\n", buffer[1]);
             //pio_output_toggle(LED2_PIO);
             pio_output_toggle(LED1_PIO);
         }
 
         driving_motor(pwm1, PWM2_PIO, pwm3, PWM4_PIO);
-        //Forward PWM, fast decay
 
-        
-        //Forward PWM, slow decay
-        //pio_config_set(PWM1_PIO, PIO_OUTPUT_HIGH);
-        //pio_config_set(PWM3_PIO, PIO_OUTPUT_HIGH);
-        
-        //Reverse PWM, fast decay
-        //pio_config_set(PWM1_PIO, PIO_OUTPUT_LOW);
-        //pio_config_set(PWM3_PIO, PIO_OUTPUT_LOW);
-
-        //Reverse PWM, slow decay
-        //pio_config_set(PWM2_PIO, PIO_OUTPUT_HIGH);
-        //pio_config_set(PWM4_PIO, PIO_OUTPUT_HIGH);
     }
         
     
