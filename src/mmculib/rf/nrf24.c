@@ -252,7 +252,7 @@ nrf24_t *nrf24_create(spi_t spi, pio_t ce_pio, pio_t irq_pio)
 
 bool nrf24_begin(nrf24_t *nrf, uint8_t channel, uint64_t address, uint8_t payload_size)
 {
-    pio_output_set(nrf->ce_pio, false);
+    pio_config_set(nrf->ce_pio, PIO_OUTPUT_LOW);
 #ifdef RADIO_IRQ_PIO
     pio_config_set(nrf->irq_pio, PIO_INPUT);
 #endif
