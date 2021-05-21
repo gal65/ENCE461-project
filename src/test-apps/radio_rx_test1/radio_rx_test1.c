@@ -48,7 +48,7 @@ int main (void)
         panic();
 
     // initialize the NRF24 radio with its unique 5 byte address
-    if (!nrf24_begin(nrf, 4, 0x0123456789, 32))
+    if (!nrf24_begin(nrf, 4, 100, 32))
         panic();
     if (!nrf24_listen(nrf))
         panic();
@@ -60,6 +60,7 @@ int main (void)
             printf("%s\n", buffer);
             //pio_output_toggle(LED2_PIO);
             pio_output_toggle(LED1_PIO);
+            fflush(stdout);
         }
     }
 }
