@@ -1,5 +1,5 @@
-PERIPHERALS = pit
-DRIVERS =
+PERIPHERALS = adc
+DRIVERS = rf pacer
 TARGET = hat.bin
 
 SRC = hat.c
