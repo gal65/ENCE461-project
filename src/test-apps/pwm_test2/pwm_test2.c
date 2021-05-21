@@ -197,7 +197,7 @@ main (void)
         panic();
 
     // initialize the NRF24 radio with its unique 5 byte address
-    if (!nrf24_begin(nrf, 4, 0x0123456789, 32))
+    if (!nrf24_begin(nrf, 4, 100, 32))
         panic();
     if (!nrf24_listen(nrf))
         panic();
@@ -220,39 +220,62 @@ main (void)
 
         char buffer[32];
         if (nrf24_read(nrf, buffer, sizeof(buffer))) {
-            //printf("%.3s\n", &buffer[12]);
+            //printf("%s\n", buffer);
             //printf("%d\n", atoi(&buffer[12]));
             //pio_output_toggle(LED2_PIO);
             pio_output_toggle(LED1_PIO);
-            
+            fflush(stdout);
         }
-        int x = atoi(&buffer[12]);
-        printf("%d\n", x);
-        if(x==1){
-            state++;
-            printf("state= %d\n", state);
-            
-        }
-        
-        if(state > 2 && state < 5){
+        //f: 5 b: 4 l: 3 r: 2
+        int f = atoi(&buffer[3]);
+        printf("%d\n", f);
+        int b = atoi(&buffer[9]);
+
+        if(f>3000){
             pwm_duty_set(pwm1, 800);
             pio_config_set(PWM2_PIO, PIO_OUTPUT_LOW);
             pwm_duty_set(pwm3, 800);
             pio_config_set(PWM4_PIO, PIO_OUTPUT_LOW);//forward
         }
-        if(state > 5 && state < 8){
-            pwm_duty_set(pwm1, 800);
+        else if(f<1000){
+            pwm_duty_set(pwm1, 700);
             pio_config_set(PWM2_PIO, PIO_OUTPUT_HIGH);
-            pwm_duty_set(pwm3, 800);
+            pwm_duty_set(pwm3, 700);
             pio_config_set(PWM4_PIO, PIO_OUTPUT_HIGH);//backward
         }
-        if(state > 8){
+        else{
             pwm_duty_set(pwm1, 0);
             pio_config_set(PWM2_PIO, PIO_OUTPUT_LOW);
             pwm_duty_set(pwm3, 0);
             pio_config_set(PWM4_PIO, PIO_OUTPUT_LOW);//stop
-
         }
+
+        // int x = atoi(&buffer[12]);
+        // printf("%d\n", x);
+        // if(x==1){
+        //     state++;
+        //     printf("state= %d\n", state);
+            
+        // }
+        // if(state > 2 && state < 5){
+        //     pwm_duty_set(pwm1, 800);
+        //     pio_config_set(PWM2_PIO, PIO_OUTPUT_LOW);
+        //     pwm_duty_set(pwm3, 800);
+        //     pio_config_set(PWM4_PIO, PIO_OUTPUT_LOW);//forward
+        // }
+        // if(state > 5 && state < 8){
+        //     pwm_duty_set(pwm1, 800);
+        //     pio_config_set(PWM2_PIO, PIO_OUTPUT_HIGH);
+        //     pwm_duty_set(pwm3, 800);
+        //     pio_config_set(PWM4_PIO, PIO_OUTPUT_HIGH);//backward
+        // }
+        // if(state > 8){
+        //     pwm_duty_set(pwm1, 0);
+        //     pio_config_set(PWM2_PIO, PIO_OUTPUT_LOW);
+        //     pwm_duty_set(pwm3, 0);
+        //     pio_config_set(PWM4_PIO, PIO_OUTPUT_LOW);//stop
+
+        // }
 
 
         //driving_motor1(x, pwm1, PWM2_PIO, pwm3, PWM4_PIO);
