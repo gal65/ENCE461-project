@@ -145,7 +145,7 @@ static void panic(void)
     while (1) {
         pio_output_toggle(LED1_PIO);
         pio_output_toggle(LED2_PIO);
-        delay_ms(400);
+        delay_ms(1000);
     }
 }
 
@@ -228,25 +228,25 @@ main (void)
         }
         int x = atoi(&buffer[12]);
         printf("%d\n", x);
-        if(x==0){
+        if(x==1){
             state++;
             printf("state= %d\n", state);
             
         }
         
-        if(state < 5){
+        if(state > 2 && state < 5){
             pwm_duty_set(pwm1, 800);
             pio_config_set(PWM2_PIO, PIO_OUTPUT_LOW);
             pwm_duty_set(pwm3, 800);
             pio_config_set(PWM4_PIO, PIO_OUTPUT_LOW);//forward
         }
-        if(state > 5 && state <= 10){
+        if(state > 5 && state < 8){
             pwm_duty_set(pwm1, 800);
             pio_config_set(PWM2_PIO, PIO_OUTPUT_HIGH);
             pwm_duty_set(pwm3, 800);
-            pio_config_set(PWM4_PIO, PIO_OUTPUT_HIGH);//forward
+            pio_config_set(PWM4_PIO, PIO_OUTPUT_HIGH);//backward
         }
-        if(state > 10){
+        if(state > 8){
             pwm_duty_set(pwm1, 0);
             pio_config_set(PWM2_PIO, PIO_OUTPUT_LOW);
             pwm_duty_set(pwm3, 0);
