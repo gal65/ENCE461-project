@@ -19,6 +19,22 @@
                 "advance main"
             ],
             "preLaunchTask": "Make"
+        },
+        {
+            "name": "Debug on Linux",
+            "type": "gdb",
+            "request": "launch",
+            "target": "${fileDirname}/${fileBasenameNoExtension}.bin",
+            "cwd": "${fileDirname}",
+            "gdbpath": "/usr/bin/gdb-multiarch",
+            "autorun": [
+                "target remote localhost:3333",
+                "set architecture armv4",
+                "symbol-file ${fileDirname}/${fileBasenameNoExtension}.bin",
+                "load",
+                "monitor reset halt",
+                "advance main"
+            ]
         }
     ]
 }

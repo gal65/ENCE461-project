@@ -13,7 +13,10 @@
             "includePath": [
                 "${workspaceFolder}/src/boards/hat",
                 "${workspaceFolder}/src/mat91lib/**",
-                "${workspaceFolder}/src/mmculib/**"
+                "${workspaceFolder}/src/mmculib/**",
+                "${workspaceFolder}/src/apps/hat_freertos/freertos/include",
+                "${workspaceFolder}/src/apps/hat_freertos",
+                "${workspaceFolder}/src/apps/hat_freertos/freertos/port"
             ]
         },
         {
