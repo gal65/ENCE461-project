@@ -64,7 +64,7 @@ int main (void)
 
         sprintf (buffer, "test123 %d\r\n", count++);
 
-        if (! nrf24_write(nrf, buffer, sizeof (buffer)))
+        if (!nrf24_write(nrf, buffer, sizeof (buffer)))
             pio_output_set(LED1_PIO, 0);
         else
             pio_output_set(LED1_PIO, 1);

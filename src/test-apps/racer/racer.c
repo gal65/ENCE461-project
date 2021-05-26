@@ -15,7 +15,6 @@
 #include "delay.h"
 #include "usb_serial.h"
 #include "ledbuffer.h"
-#include "common.h"
 
 //LED strip
 #define NUM_LEDS 26

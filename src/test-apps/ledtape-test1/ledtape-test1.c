@@ -9,8 +9,8 @@
 #include "pacer.h"
 #include "ledtape.h"
 
-#define NUM_LEDS 20
-
+#define NUM_LEDS 26
+#define LEDTAPE_PIO PB0_PIO
 /*
     This test app shows how to program the WS2318B LED tape.
     In this example the ledtape_write() function is used to send the appropriate

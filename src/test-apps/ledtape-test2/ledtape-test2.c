@@ -9,7 +9,8 @@
 #include "pacer.h"
 #include "ledbuffer.h"
 
-#define NUM_LEDS 15
+#define NUM_LEDS 26
+#define LEDTAPE_PIO PB0_PIO
 
 /*
     This is an alternative method for driving the LED tape using the ledbuffer
