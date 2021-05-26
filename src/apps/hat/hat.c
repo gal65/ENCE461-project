@@ -13,6 +13,10 @@
 #include "config.h"
 #include "common.h"
 
+void radio_configuration(nrf24_t* nrf, spi_t* spi);
+
+uint64_t RADIO_ADDRESSES[] = {70, 80, 90, 100};
+
 static void panic(void);
 
 #define ADC_CLOCK_FREQ 24000000
@@ -44,20 +48,13 @@ int16_t min(int16_t a, int16_t b) {
 
 int main (void)
 {
-    spi_cfg_t nrf_spi = {
-        .channel = 0,
-        .clock_speed_kHz = 1000,
-        .cs = RADIO_CS_PIO,
-        .mode = SPI_MODE_0,
-        .cs_mode = SPI_CS_MODE_FRAME,
-        .bits = 8,
-    };
-    nrf24_t *nrf;
-    spi_t spi;
+    nrf24_t *nrf = NULL;
+    spi_t* spi = NULL;
     adc_t adc;
 
     movement_data_t movement_data;    
 
+    radio_configuration(nrf, spi);
 
     // Create non-blocking tty device for USB CDC connection.
     usb_serial_init (&usb_serial_cfg, "/dev/usb_tty");
@@ -75,20 +72,15 @@ int main (void)
 
     pacer_init(10);
     adc = adc_init (&adc_cfg);
-    spi = spi_init(&nrf_spi);
 
-    nrf = nrf24_create(spi, RADIO_CE_PIO, RADIO_IRQ_PIO);
-    if (!nrf) panic();
 
-    // initialize the NRF24 radio with its unique 5 byte address
-    if (!nrf24_begin(nrf, 4, 100, 32)) panic();
+
     
-    uint16_t data[1];
-    char buffer[32];
+    uint16_t data;
     while(1) {
         pacer_wait();
-        adc_read(adc, data, sizeof(data));
-        sprintf(buffer, "f: %d b: 0 l: 0 r: 0\n", (int)data[0]);
+        adc_read(adc, &data, sizeof(data));
+        // sprintf(buffer, "f: %d b: 0 l: 0 r: 0\n", (int)data[0]);
         // nrf24_write(nrf, buffer, sizeof(buffer));
         if (mpu)
         {
@@ -138,6 +130,30 @@ int main (void)
 
         fflush(stdout);
     }
+}
+
+void radio_configuration(nrf24_t* nrf, spi_t* spi) {
+    spi_cfg_t nrf_spi = {
+        .channel = 0,
+        .clock_speed_kHz = 1000,
+        .cs = RADIO_CS_PIO,
+        .mode = SPI_MODE_0,
+        .cs_mode = SPI_CS_MODE_FRAME,
+        .bits = 8,
+    };
+
+    *spi = spi_init(&nrf_spi);
+
+    nrf = nrf24_create(*spi, RADIO_CE_PIO, RADIO_IRQ_PIO);
+    if (!nrf) panic();
+
+    pio_config_set(RADIO_JUMPER_1_PIO, PIO_PULLDOWN);
+    pio_config_set(RADIO_JUMPER_1_PIO, PIO_PULLDOWN);
+
+    int addr_index = (pio_input_get(RADIO_JUMPER_1_PIO) << 1) | pio_input_get(RADIO_JUMPER_2_PIO);
+
+    // initialize the NRF24 radio with its unique 5 byte address
+    if (!nrf24_begin(nrf, 4, RADIO_ADDRESSES[addr_index], 32)) panic();
 }
 
 static void panic(void)

@@ -56,5 +56,8 @@
 #define RADIO_CE_PIO PA29_PIO
 #define RADIO_IRQ_PIO PA15_PIO
 
+#define RADIO_JUMPER_1_PIO PB1_PIO
+#define RADIO_JUMPER_2_PIO PB2_PIO
+
 
 #endif /* TARGET_H  */
