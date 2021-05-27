@@ -131,10 +131,10 @@ static uint16_t battery_millivolts(void)
     adc_sample_t s;
     adc_read(battery_sensor, &s, sizeof(s));
 
-    // 47k pull down & 27k pull up gives a scale factor or
-    // 47 / (47 + 27) = 0.6351
-    // 4096 (max ADC reading) * 0.4125 ~= 2601
-    return (uint16_t)((int)s) * 3300 / 2601;
+    // 5.6 pull down & 10k pull up gives a scale factor or
+    // 5.6 / (5.6 + 10) = 0.3590
+    // 4096 (max ADC reading) * 0.3590 ~= 1365
+    return (uint16_t)((int)s) * 3300 / 1365;
 }
 
 
