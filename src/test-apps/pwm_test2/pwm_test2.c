@@ -17,6 +17,9 @@
 #include "ledbuffer.h"
 #include "common.h"
 
+//battery test
+#include "adc.h"
+
 //LED strip
 #define NUM_LEDS 26
 #define LEDTAPE_PIO PB0_PIO
@@ -40,6 +43,9 @@
 //radio select
 #define TOP_SW PB14_PIO
 #define BOT_SW PB13_PIO
+
+//battery 
+#define BATTERY_VOLTAGE_ADC ADC_CHANNEL_8
 
 
 /* Define how fast ticks occur.  This must be faster than
@@ -91,63 +97,7 @@ static const pwm_cfg_t pwm4_cfg =
 };
 
 
-void driving_motor1(int x, pwm_t pwm1, pio_t AN2 , pwm_t pwm3,  pio_t BN2){
-    int state = 0;
-    if(x == 0){
-        state++;
-    }
-    if(state < 5){
-    pwm_duty_set(pwm1, 800);
-    pio_config_set(AN2, PIO_OUTPUT_LOW);
-    pwm_duty_set(pwm3, 800);
-    pio_config_set(BN2, PIO_OUTPUT_LOW);//forward
-    }
-    if(state>=5 && state<10){
-        pwm_duty_set(pwm1, 700);
-        pio_config_set(AN2, PIO_OUTPUT_HIGH);
-        pwm_duty_set(pwm3, 700);
-        pio_config_set(BN2, PIO_OUTPUT_HIGH);//backward
 
-    }
-    //if(state>4000 && state < 6000){
-        //pwm_duty_set(pwm1, 500);
-        //pio_config_set(AN2, PIO_OUTPUT_HIGH);
-        //pwm_duty_set(pwm3, 500);
-        //pio_config_set(BN2, PIO_OUTPUT_HIGH);
-
-    //}
-    if(state>=10){
-        pwm_duty_set(pwm1, 0);
-        pio_config_set(AN2, PIO_OUTPUT_LOW);
-        pwm_duty_set(pwm3, 0);
-        pio_config_set(BN2, PIO_OUTPUT_LOW);//stop
-
-    }
-    
-}
-
-void driving_motor2(int x, pwm_t pwm1, pio_t AN2 , pwm_t pwm3,  pio_t BN2){
-    
-    if(x > 500){
-        pwm_duty_set(pwm1, 800);
-        pio_config_set(AN2, PIO_OUTPUT_LOW);
-        pwm_duty_set(pwm3, 800);
-        pio_config_set(BN2, PIO_OUTPUT_LOW); //forward
-    }
-    else if(x < -500){
-        pwm_duty_set(pwm1, 500);
-        pio_config_set(AN2, PIO_OUTPUT_HIGH);
-        pwm_duty_set(pwm3, 500);
-        pio_config_set(BN2, PIO_OUTPUT_HIGH);//backward
-    }else{
-        pwm_duty_set(pwm1, 0);
-        pio_config_set(AN2, PIO_OUTPUT_LOW);
-        pwm_duty_set(pwm3, 0);
-        pio_config_set(BN2, PIO_OUTPUT_LOW);//stop
-    }
-    
-
-}
 
 //paninc function for the radio
 static void panic(void)
@@ -158,6 +108,35 @@ static void panic(void)
         delay_ms(1000);
     }
 }
+
+//battery detection set up
+static adc_t battery_sensor;
+
+static int battery_sensor_init(void)
+{
+    adc_cfg_t bat = {
+        .channel = BATTERY_VOLTAGE_ADC,
+        .bits = 12,
+        .trigger = ADC_TRIGGER_SW,
+        .clock_speed_kHz = F_CPU / 4000,
+    };
+
+    battery_sensor = adc_init(&bat);
+
+    return (battery_sensor == 0) ? -1 : 0;
+}
+
+static uint16_t battery_millivolts(void)
+{
+    adc_sample_t s;
+    adc_read(battery_sensor, &s, sizeof(s));
+
+    // 47k pull down & 27k pull up gives a scale factor or
+    // 47 / (47 + 27) = 0.6351
+    // 4096 (max ADC reading) * 0.4125 ~= 2601
+    return (uint16_t)((int)s) * 3300 / 2601;
+}
+
 
 int
 main (void)
@@ -181,8 +160,8 @@ main (void)
     uint8_t flash_ticks;
 
     /* Configure LED PIO as output.  */
-    pio_config_set (LED1_PIO, PIO_OUTPUT_LOW);
-    pio_config_set (LED2_PIO, PIO_OUTPUT_LOW);
+    pio_config_set (LED1_PIO, PIO_OUTPUT_HIGH);
+    pio_config_set (LED2_PIO, PIO_OUTPUT_HIGH);
 
     //configure Bumper to be NO(normally open) to set bumper_activite to high
     pio_config_set(BUMPER_DETECT, PIO_INPUT_PULLUP);
@@ -224,6 +203,9 @@ main (void)
         panic();
     if (!nrf24_listen(nrf))
         panic();
+    //
+    if (battery_sensor_init() < 0)
+    panic();
     int state = 0;
     while (1){
         if (pio_input_get(TOP_SW) == 1 && pio_input_get(BOT_SW) == 1){
@@ -245,20 +227,16 @@ main (void)
             nrf24_write(nrf, buffer, sizeof (buffer));
             delay_ms(6000);
         }
-        printf("%d\n", pio_input_get(TOP_SW));
-        printf("%d\n", pio_input_get(BOT_SW));
-        /* Wait until next clock tick.  */
-        pacer_wait ();
 
-        flash_ticks++;
-        if (flash_ticks >= LOOP_POLL_RATE / (LED_FLASH_RATE * 2))
-        {
-            flash_ticks = 0;
-
-            /* Toggle LED.  */
-            pio_output_toggle (LED1_PIO);
-            pio_output_toggle (LED2_PIO);
+        if (battery_millivolts() < 3000) {
+            pio_config_set(LED2_PIO, PIO_OUTPUT_LOW);
+        }else{
+            pio_config_set(LED2_PIO, PIO_OUTPUT_HIGH);
         }
+        //printf("%d\n", pio_input_get(TOP_SW));
+        //printf("%d\n", pio_input_get(BOT_SW));
+        /* Wait until next clock tick.  */
+
         //LED strip
         if (count++ == NUM_LEDS) {
             // wait for a revolution
@@ -286,62 +264,29 @@ main (void)
             pio_output_toggle(LED1_PIO);
             fflush(stdout);
         }
-        //f: 5 b: 4 l: 3 r: 2
-        int f = atoi(&buffer[3]);
-        printf("forward%d\n", f);
-        int b = atoi(&buffer[9]);
 
-        if(f>3000){
-            pwm_duty_set(pwm1, 800);
+        int duty_1 = atoi(&buffer[4]);
+        pwm_duty_set(pwm1, duty_1);
+        int dir_1 = atoi(&buffer[0]);
+        if (dir_1 == 0){
             pio_config_set(PWM2_PIO, PIO_OUTPUT_LOW);
-            pwm_duty_set(pwm3, 800);
-            pio_config_set(PWM4_PIO, PIO_OUTPUT_LOW);//forward
-        }
-        else if(f<1000){
-            pwm_duty_set(pwm1, 700);
+        }else{
             pio_config_set(PWM2_PIO, PIO_OUTPUT_HIGH);
-            pwm_duty_set(pwm3, 700);
-            pio_config_set(PWM4_PIO, PIO_OUTPUT_HIGH);//backward
         }
-        else{
-            pwm_duty_set(pwm1, 0);
-            pio_config_set(PWM2_PIO, PIO_OUTPUT_LOW);
-            pwm_duty_set(pwm3, 0);
-            pio_config_set(PWM4_PIO, PIO_OUTPUT_LOW);//stop
+        int duty_2 = atoi(&buffer[9]);
+        pwm_duty_set(pwm3, duty_2);
+        int dir_2 = atoi(&buffer[2]);
+        if (dir_2 == 0){
+            pio_config_set(PWM4_PIO, PIO_OUTPUT_LOW);
+        }else{
+            pio_config_set(PWM4_PIO, PIO_OUTPUT_HIGH);
         }
+
+        //motors(pwm1, pwm2, pwm3, duty_1, dir_1, duty_2, dir_2);
+        
         
 
-        // int x = atoi(&buffer[12]);
-        // printf("%d\n", x);
-        // if(x==1){
-        //     state++;
-        //     printf("state= %d\n", state);
-            
-        // }
-        // if(state > 2 && state < 5){
-        //     pwm_duty_set(pwm1, 800);
-        //     pio_config_set(PWM2_PIO, PIO_OUTPUT_LOW);
-        //     pwm_duty_set(pwm3, 800);
-        //     pio_config_set(PWM4_PIO, PIO_OUTPUT_LOW);//forward
-        // }
-        // if(state > 5 && state < 8){
-        //     pwm_duty_set(pwm1, 800);
-        //     pio_config_set(PWM2_PIO, PIO_OUTPUT_HIGH);
-        //     pwm_duty_set(pwm3, 800);
-        //     pio_config_set(PWM4_PIO, PIO_OUTPUT_HIGH);//backward
-        // }
-        // if(state > 8){
-        //     pwm_duty_set(pwm1, 0);
-        //     pio_config_set(PWM2_PIO, PIO_OUTPUT_LOW);
-        //     pwm_duty_set(pwm3, 0);
-        //     pio_config_set(PWM4_PIO, PIO_OUTPUT_LOW);//stop
-
-        // }
-
-
-        //driving_motor1(x, pwm1, PWM2_PIO, pwm3, PWM4_PIO);
-        //driving_motor2(x, pwm1, PWM2_PIO, pwm3, PWM4_PIO);
-
+        
     }
         
     
