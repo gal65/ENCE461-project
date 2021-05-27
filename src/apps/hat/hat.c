@@ -77,28 +77,28 @@ void blink2_task(void) {
     pio_output_toggle(LED2_PIO);
 }
 
-static tweeter_scale_t scale_table[] = TWEETER_SCALE_TABLE (1000);
+//static tweeter_scale_t scale_table[] = TWEETER_SCALE_TABLE (1000);
 
-static const tweeter_private_t tweety =
-{
-    .note_clock = 1000,
-    .note_period = 200,
-    .note_duty = 200,
-    .note_holdoff = 50e-3,
-    .poll_rate = 1000,
-    .scale_table = &scale_table,
-};
+//static const tweeter_private_t tweety =
+//{
+  //  .note_clock = 1000,
+  //  .note_period = 200,
+  //  .note_duty = 200,
+  //  .note_holdoff = 50e-3,
+  //  .poll_rate = 1000,
+  //  .scale_table = &scale_table,
+//};
 
-static const mcu_sleep_wakeup_cfg_t wake_up_pin=
-{
-    .pio = PA2_PIO,
-    .active_high = false
-};
+//static const mcu_sleep_wakeup_cfg_t wake_up_pin=
+//{
+//    .pio = PA2_PIO,
+//    .active_high = false
+//};
 
-static const mcu_sleep_cfg_t sleepy_mode =
-{
-    .mode = MCU_SLEEP_MODE_BACKUP
-};
+//static const mcu_sleep_cfg_t sleepy_mode =
+//{
+//    .mode = MCU_SLEEP_MODE_BACKUP
+//};
 
 int main (void)
 {
@@ -138,24 +138,24 @@ int main (void)
     adc_1 = adc_init (&adc_cfg_1);
     adc_2 = adc_init (&adc_cfg_2);
 
-    tweeter_init(&tweety, 1000, &scale_table);
+    //tweeter_init(&tweety, 1000, &scale_table);
 
     uint16_t data;
     while(1) {
         pacer_wait();
-        tweeter_update(tweety);
+        //tweeter_update(tweety);
         adc_read(adc_1, &data, sizeof(data));
         adc_read(adc_2, &data, sizeof(data));
-        printf("adc_1\n");
-        printf("adc_2\n");
+        sprintf(adc_1, "\n");
+        sprintf(adc_2, "\n");
         // sprintf(buffer, "f: %d b: 0 l: 0 r: 0\n", (int)data[0]);
         // nrf24_write(nrf, buffer, sizeof(buffer));
-        if (pio_input_get(BUTTON_PIO))
-        {
-            delay_ms(1000);
-            mcu_sleep_wakeup_set(&wake_up_pin);
-            mcu_sleep(&sleepy_mode);
-        }
+        //if (pio_input_get(BUTTON_PIO))
+        //{
+        //    delay_ms(1000);
+        //    mcu_sleep_wakeup_set(&wake_up_pin);
+        //    mcu_sleep(&sleepy_mode);
+        //}
         if (mpu)
         {
             /* read in the accelerometer data */
