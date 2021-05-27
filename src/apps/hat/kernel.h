@@ -5,7 +5,7 @@
 
 #define KERNEL_TICK_FREQUENCY F_CPU
 
-typedef void (*task_func_t) (void);
+typedef void (*task_func_t)(void);
 
 typedef struct {
     task_func_t func;

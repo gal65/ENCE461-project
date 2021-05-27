@@ -1,10 +1,10 @@
 #include "init.h"
 
 #include "adc.h"
+#include "config.h"
 #include "delay.h"
 #include "mpu9250.h"
 #include "nrf24.h"
-#include "target.h"
 #include "usb_serial.h"
 
 #define ADC_CLOCK_FREQ 24000000
@@ -60,8 +60,8 @@ static void panic(void);
 
 void init_hat(void)
 {
-    pio_config_set(LED1_PIO, PIO_OUTPUT_LOW);
-    pio_config_set(LED2_PIO, PIO_OUTPUT_LOW);
+    pio_config_set(LED1_PIO, PIO_OUTPUT_HIGH);
+    pio_config_set(LED2_PIO, PIO_OUTPUT_HIGH);
     pio_config_set(BUTTON_PIO, PIO_PULLUP);
 
     radio_configuration(&nrf, &nrf_spi);

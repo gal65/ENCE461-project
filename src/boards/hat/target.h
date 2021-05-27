@@ -61,5 +61,4 @@
 
 #define SPEAKER_PIO PB14_PIO
 
-
 #endif /* TARGET_H  */
