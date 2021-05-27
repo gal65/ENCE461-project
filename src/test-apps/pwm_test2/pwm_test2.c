@@ -96,16 +96,13 @@ static const pwm_cfg_t pwm4_cfg =
     .stop_state = PIO_OUTPUT_LOW
 };
 
-
-
-
 //paninc function for the radio
 static void panic(void)
 {
     while (1) {
         pio_output_toggle(LED1_PIO);
         pio_output_toggle(LED2_PIO);
-        delay_ms(1000);
+        delay_ms(10);
     }
 }
 
@@ -118,7 +115,7 @@ static int battery_sensor_init(void)
         .channel = BATTERY_VOLTAGE_ADC,
         .bits = 12,
         .trigger = ADC_TRIGGER_SW,
-        .clock_speed_kHz = F_CPU / 4000,
+        .clock_speed_kHz = 24000000 / 4000,
     };
 
     battery_sensor = adc_init(&bat);
@@ -133,7 +130,8 @@ static uint16_t battery_millivolts(void)
 
     // 5.6 pull down & 10k pull up gives a scale factor or
     // 5.6 / (5.6 + 10) = 0.3590
-    // 4096 (max ADC reading) * 0.3590 ~= 1365
+    // (5.6 + 10) / 5.6 = 2.8 
+    // 4096 (max ADC readig) * 0.3590 ~= 1365
     return (uint16_t)((int)s) * 3300 / 1365;
 }
 
@@ -205,7 +203,7 @@ main (void)
         panic();
     //
     if (battery_sensor_init() < 0)
-    panic();
+        panic();
     int state = 0;
     while (1){
         if (pio_input_get(TOP_SW) == 1 && pio_input_get(BOT_SW) == 1){
@@ -227,7 +225,7 @@ main (void)
             nrf24_write(nrf, buffer, sizeof (buffer));
             delay_ms(6000);
         }
-
+        printf("%d\n",battery_millivolts());
         if (battery_millivolts() < 3000) {
             pio_config_set(LED2_PIO, PIO_OUTPUT_LOW);
         }else{
