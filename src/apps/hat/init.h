@@ -6,8 +6,9 @@
 #include "nrf24.h"
 
 extern nrf24_t* nrf;
-extern adc_t adc_1;
-extern adc_t adc_2;
+extern adc_t joystick_x_adc;
+extern adc_t joystick_y_adc;
+extern adc_t battery_voltage_adc;
 extern mpu_t* imu;
 
 void init_hat(void);

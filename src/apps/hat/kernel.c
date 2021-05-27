@@ -2,15 +2,22 @@
 
 #include "pit.h"
 #include <stdint.h>
+#include <string.h>
 
-void kernel_run(task_t* tasks, int num_tasks)
+task_t* tasks = NULL;
+int tasks_len;
+
+void kernel_run(task_t* tasks_vec, int num_tasks)
 {
     pit_init();
 
+    tasks = tasks_vec;
+    tasks_len = num_tasks;
+
     while (true) {
-        for (int i = 0; i < num_tasks; i++) {
+        for (int i = 0; i < tasks_len; i++) {
             uint32_t current_time = pit_get();
-            if ((pit_get() - tasks[i].last_wakeup) >= tasks[i].period_ms) {
+            if ((pit_get() - tasks[i].last_wakeup) >= tasks[i].period_ms && tasks[i].enabled) {
                 tasks[i].last_wakeup = current_time;
                 tasks[i].func();
                 break;
@@ -19,7 +26,24 @@ void kernel_run(task_t* tasks, int num_tasks)
     }
 }
 
-task_t create_task(task_func_t func, uint32_t period_ms)
+task_t create_task(char* name, task_func_t func, uint32_t period_ms)
 {
-    return (task_t) { func, period_ms, 0 };
+    return (task_t) { name, func, period_ms, 0, true };
+}
+
+void enable_task(char* name)
+{
+    for (int i = 0; i < tasks_len; i++) {
+        if (!strcmp(tasks[i].name, name)) {
+            tasks[i].enabled = true;
+        }
+    }
+}
+void disable_task(char* name)
+{
+    for (int i = 0; i < tasks_len; i++) {
+        if (!strcmp(tasks[i].name, name)) {
+            tasks[i].enabled = false;
+        }
+    }
 }

@@ -1,6 +1,7 @@
 #ifndef KERNEL_H
 #define KERNEL_H
 
+#include <stdbool.h>
 #include <stdint.h>
 
 #define KERNEL_TICK_FREQUENCY F_CPU
@@ -8,13 +9,18 @@
 typedef void (*task_func_t)(void);
 
 typedef struct {
+    char* name;
     task_func_t func;
     uint32_t period_ms;
     uint32_t last_wakeup;
+    bool enabled;
 } task_t;
 
 void kernel_run(task_t* tasks, int num_tasks);
 
-task_t create_task(task_func_t func, uint32_t period_ms);
+task_t create_task(char* name, task_func_t func, uint32_t period_ms);
+
+void enable_task(char* name);
+void disable_task(char* name);
 
 #endif

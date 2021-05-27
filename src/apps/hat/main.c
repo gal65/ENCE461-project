@@ -37,16 +37,14 @@
 //    .mode = MCU_SLEEP_MODE_BACKUP
 //};
 
+#define PRINT_CONTROLLER_OUTPUT 1
+
 bool control_from_imu = true;
 
 void imu_control_task(void)
 {
     int16_t accel[3];
     char radio_send_buffer[32] = { 0 };
-
-    if (!control_from_imu) {
-        return;
-    }
 
     if (!imu) {
         printf("ERROR: can't find MPU9250!\n");
@@ -72,8 +70,10 @@ void imu_control_task(void)
         move.left_motor_direction, move.right_motor_direction,
         move.left_motor_pwm, move.right_motor_pwm);
 
+#if PRINT_CONTROLLER_OUTPUT
     printf("%s\n", radio_send_buffer);
     fflush(stdout);
+#endif
 
     nrf24_write(nrf, radio_send_buffer, sizeof(radio_send_buffer));
     nrf24_listen(nrf);
@@ -84,13 +84,10 @@ void imu_control_task(void)
 void joystick_control_task(void)
 {
     char radio_send_buffer[32] = { 0 };
-    if (control_from_imu) {
-        return;
-    }
 
     uint16_t x_data, y_data;
-    adc_read(adc_1, &x_data, sizeof(x_data));
-    adc_read(adc_2, &y_data, sizeof(y_data));
+    adc_read(joystick_x_adc, &x_data, sizeof(x_data));
+    adc_read(joystick_y_adc, &y_data, sizeof(y_data));
 
     motor_data_t move = get_motor_values_joystick(x_data, y_data);
 
@@ -98,8 +95,10 @@ void joystick_control_task(void)
         move.left_motor_direction, move.right_motor_direction,
         move.left_motor_pwm, move.right_motor_pwm);
 
+#if PRINT_CONTROLLER_OUTPUT
     printf("%s\n", radio_send_buffer);
     fflush(stdout);
+#endif
 
     nrf24_write(nrf, radio_send_buffer, sizeof(radio_send_buffer));
     nrf24_listen(nrf);
@@ -114,6 +113,15 @@ void change_control_method_task(void)
 
     if (prev_button_state && !button_state) {
         control_from_imu = !control_from_imu;
+
+        if (control_from_imu) {
+            disable_task("joystick_control");
+            enable_task("imu_control");
+        } else {
+            enable_task("joystick_control");
+            disable_task("imu_control");
+        }
+
         printf("Control from IMU: %d\n", control_from_imu);
         fflush(stdout);
     }
@@ -131,16 +139,31 @@ void check_bumber_task(void)
     }
 }
 
+void battery_voltage_task(void)
+{
+    uint16_t bat;
+    adc_read(battery_voltage_adc, &bat, sizeof(bat));
+    if (bat < 2715) {
+    }
+    printf("ADC: %d\n", bat);
+    fflush(stdout);
+}
+
 int main(void)
 {
     init_hat();
 
     task_t tasks[] = {
-        { imu_control_task, 100, 0 },
-        { joystick_control_task, 100, 0 },
-        { change_control_method_task, 100, 0 },
-        { check_bumber_task, 100, 0 },
+        create_task("imu_control", imu_control_task, 100),
+        create_task("joystick_control", joystick_control_task, 100),
+        create_task("change_control", change_control_method_task, 100),
+        create_task("bumper", check_bumber_task, 100),
+
+        // todo lower period
+        create_task("battery", battery_voltage_task, 500),
     };
+
+    disable_task("joystick_control");
 
     kernel_run(tasks, sizeof(tasks) / sizeof(task_t));
 
@@ -150,8 +173,8 @@ int main(void)
     while (1) {
         pacer_wait();
         // tweeter_update(tweety);
-        // sprintf(adc_1, "\n");
-        // sprintf(adc_2, "\n");
+        // sprintf(joystick_x_adc, "\n");
+        // sprintf(joystick_y_adc, "\n");
         // sprintf(buffer, "f: %d b: 0 l: 0 r: 0\n", (int)data[0]);
         // nrf24_write(nrf, buffer, sizeof(buffer));
         // if (pio_input_get(BUTTON_PIO))

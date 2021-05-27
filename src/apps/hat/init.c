@@ -37,6 +37,13 @@ static const adc_cfg_t adc_cfg_2 = {
     .clock_speed_kHz = ADC_CLOCK_FREQ / 1000
 };
 
+static const adc_cfg_t battery_voltage_adc_cfg = {
+    .bits = 12,
+    .channel = ADC_CHANNEL_3,
+    .trigger = ADC_TRIGGER_SW,
+    .clock_speed_kHz = ADC_CLOCK_FREQ / 1000
+};
+
 static usb_serial_cfg_t usb_serial_cfg = {
     .read_timeout_us = 1,
     .write_timeout_us = 1,
@@ -50,8 +57,9 @@ static twi_cfg_t mpu_twi_cfg = {
 
 // public:
 nrf24_t* nrf = NULL;
-adc_t adc_1 = NULL;
-adc_t adc_2 = NULL;
+adc_t joystick_x_adc = NULL;
+adc_t joystick_y_adc = NULL;
+adc_t battery_voltage_adc = NULL;
 mpu_t* imu = NULL;
 
 // private:
@@ -80,8 +88,9 @@ void init_hat(void)
     imu_twi = twi_init(&mpu_twi_cfg);
     imu = mpu9250_create(imu_twi, MPU_ADDRESS);
 
-    adc_1 = adc_init(&adc_cfg_1);
-    adc_2 = adc_init(&adc_cfg_2);
+    joystick_x_adc = adc_init(&adc_cfg_1);
+    joystick_y_adc = adc_init(&adc_cfg_2);
+    battery_voltage_adc = adc_init(&battery_voltage_adc_cfg);
 }
 
 void radio_configuration(nrf24_t** out_nrf, spi_t* out_spi)
