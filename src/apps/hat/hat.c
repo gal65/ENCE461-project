@@ -10,15 +10,14 @@
 #include "adc.h"
 #include "usb_serial.h"
 #include "mpu9250.h"
+
 #include "config.h"
 #include "common.h"
 #include "kernel.h"
 #include "mcu_sleep.h"
 #include "tweeter.h"
+#include "control_mapping.h"
 
-#define FIXED_POINT_EXP 1000
-
-int32_t apply_response_curve(int32_t input, int32_t zero_thresh, int32_t sat_thresh, int32_t sat_output);
 
 void radio_configuration(nrf24_t** out_nrf, spi_t* out_spi);
 
@@ -108,16 +107,15 @@ int main (void)
     adc_t adc_1;
     adc_t adc_2;
 
-    movement_data_t move;    
 
     pio_config_set (LED1_PIO, PIO_OUTPUT_LOW);
     pio_config_set (LED2_PIO, PIO_OUTPUT_LOW);
     pio_config_set(BUTTON_PIO, PIO_PULLUP);
 
-    task_t tasks[] = {
-        create_task(blink1_task, 400),
-        create_task(blink2_task, 800)
-    };
+    // task_t tasks[] = {
+        // create_task(blink1_task, 400),
+        // create_task(blink2_task, 500)
+    // };
 
     pio_output_toggle(LED1_PIO);
     // kernel_run(tasks, 2);
@@ -170,32 +168,7 @@ int main (void)
                 int16_t accel[3];
                 if (mpu9250_read_accel (mpu, accel))
                 {
-                    int32_t forward_back = apply_response_curve(accel[1], 3000, 6000, 1000);
-                    move.left_motor_direction = forward_back > 0 ? FORWARD : BACKWARD;
-                    move.left_motor_pwm = abs(forward_back);
-
-                    move.right_motor_direction = move.left_motor_direction;
-                    move.right_motor_pwm = move.left_motor_pwm;
-
-                    int32_t left_right = apply_response_curve(accel[0], 4000, 6000, 1000);
-                    if(left_right > 0) {
-                        // turning to the right
-                        move.right_motor_pwm *= (1000 - abs(left_right));
-                        move.right_motor_pwm /= 1000;
-                    } else if(left_right < 0){
-                        // turning to the left
-                        move.left_motor_pwm *= (1000 - abs(left_right));
-                        move.left_motor_pwm /= 1000;
-                    }
-
-                    // print_movement_data(move);
-                    if(move.left_motor_direction == BACKWARD) {
-                        move.left_motor_pwm = 1000 - move.left_motor_pwm;
-                    }
-                    if(move.right_motor_direction == BACKWARD) {
-                        move.right_motor_pwm = 1000 - move.right_motor_pwm;
-                    }
-
+                    motor_data_t move = get_motor_values_imu(accel);
                     // nrf24_write(nrf, &move, sizeof(move));
                     char buffer[32] = {0};
                     snprintf(buffer, sizeof(buffer), "%d %d %-4lu %-4lu",
@@ -224,22 +197,6 @@ int main (void)
 }
 
 
-int32_t apply_response_curve(int32_t input, int32_t zero_thresh, int32_t sat_thresh, int32_t sat_output) {
-    int32_t input_abs = abs(input);
-    int32_t linear_region_divisor_ks = (sat_thresh - zero_thresh)*FIXED_POINT_EXP / sat_output;
-    if(input_abs < zero_thresh) {
-        return 0;
-    } else if(input > sat_thresh) {
-        return sat_output;
-    } else if(input < -sat_thresh) {
-        return -sat_output;
-    } else {
-        input_abs = input_abs - zero_thresh;
-        input_abs *= FIXED_POINT_EXP;
-        input_abs /= linear_region_divisor_ks;
-        return input > 0 ? input_abs : -input_abs;
-    }
-}
 
 void radio_configuration(nrf24_t** out_nrf, spi_t* out_spi) {
     *out_spi = spi_init(&nrf_spi);

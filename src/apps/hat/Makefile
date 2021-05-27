@@ -1,4 +1,4 @@
-PERIPHERALS = adc
+PERIPHERALS = adc dac
 DRIVERS = rf pacer usb_serial mpu led
 TARGET = hat.bin
 

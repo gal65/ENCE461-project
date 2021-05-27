@@ -59,5 +59,7 @@
 #define RADIO_JUMPER_1_PIO PB1_PIO
 #define RADIO_JUMPER_2_PIO PB2_PIO
 
+#define SPEAKER_PIO PB14_PIO
+
 
 #endif /* TARGET_H  */
