@@ -28,10 +28,13 @@
 #define PWM3_PIO PA16_PIO
 //BIN2
 #define PWM4_PIO PA17_PIO
+// Servo
+#define Servo_PWM PA24_PIO
 //nSLEEP
 #define nSLP_PIO PA29_PIO
 
 #define PWM_FREQ_HZ 100e3
+#define servo_pwm_freq_Hz 50
 
 //define bumper pin
 #define BUMPER_DETECT PA30_PIO
@@ -89,64 +92,15 @@ static const pwm_cfg_t pwm4_cfg =
     .stop_state = PIO_OUTPUT_LOW
 };
 
-
-void driving_motor1(int x, pwm_t pwm1, pio_t AN2 , pwm_t pwm3,  pio_t BN2){
-    int state = 0;
-    if(x == 0){
-        state++;
-    }
-    if(state < 5){
-    pwm_duty_set(pwm1, 800);
-    pio_config_set(AN2, PIO_OUTPUT_LOW);
-    pwm_duty_set(pwm3, 800);
-    pio_config_set(BN2, PIO_OUTPUT_LOW);//forward
-    }
-    if(state>=5 && state<10){
-        pwm_duty_set(pwm1, 700);
-        pio_config_set(AN2, PIO_OUTPUT_HIGH);
-        pwm_duty_set(pwm3, 700);
-        pio_config_set(BN2, PIO_OUTPUT_HIGH);//backward
-
-    }
-    //if(state>4000 && state < 6000){
-        //pwm_duty_set(pwm1, 500);
-        //pio_config_set(AN2, PIO_OUTPUT_HIGH);
-        //pwm_duty_set(pwm3, 500);
-        //pio_config_set(BN2, PIO_OUTPUT_HIGH);
-
-    //}
-    if(state>=10){
-        pwm_duty_set(pwm1, 0);
-        pio_config_set(AN2, PIO_OUTPUT_LOW);
-        pwm_duty_set(pwm3, 0);
-        pio_config_set(BN2, PIO_OUTPUT_LOW);//stop
-
-    }
-    
-}
-
-void driving_motor2(int x, pwm_t pwm1, pio_t AN2 , pwm_t pwm3,  pio_t BN2){
-    
-    if(x > 500){
-        pwm_duty_set(pwm1, 800);
-        pio_config_set(AN2, PIO_OUTPUT_LOW);
-        pwm_duty_set(pwm3, 800);
-        pio_config_set(BN2, PIO_OUTPUT_LOW); //forward
-    }
-    else if(x < -500){
-        pwm_duty_set(pwm1, 500);
-        pio_config_set(AN2, PIO_OUTPUT_HIGH);
-        pwm_duty_set(pwm3, 500);
-        pio_config_set(BN2, PIO_OUTPUT_HIGH);//backward
-    }else{
-        pwm_duty_set(pwm1, 0);
-        pio_config_set(AN2, PIO_OUTPUT_LOW);
-        pwm_duty_set(pwm3, 0);
-        pio_config_set(BN2, PIO_OUTPUT_LOW);//stop
-    }
-    
-
-}
+static const pwm_cfg_t pwmServo_cfg =
+{
+    .pio = Servo_PWM,
+    .period = PWM_PERIOD_DIVISOR (servo_pwm_freq_Hz),
+    .duty = PWM_DUTY_DIVISOR (servo_pwm_freq_Hz, 50),
+    .align = PWM_ALIGN_LEFT,
+    .polarity = PWM_POLARITY_HIGH,
+    .stop_state = PIO_OUTPUT_LOW
+};
 
 //paninc function for the radio
 static void panic(void)
@@ -171,11 +125,13 @@ main (void)
     pwm_t pwm2;
     pwm_t pwm3;
     pwm_t pwm4;
+    pwm_t pwm_servo;
 
     pwm1 = pwm_init (&pwm1_cfg);
     pwm2 = pwm_init (&pwm2_cfg);
     pwm3 = pwm_init (&pwm3_cfg);
     pwm4 = pwm_init (&pwm4_cfg);
+    pwm_servo = pwm_init(&pwmServo_cfg);
 
     uint8_t flash_ticks;
 
@@ -194,7 +150,7 @@ main (void)
     flash_ticks = 0;
     
     //Start pwm channels
-    pwm_channels_start (pwm_channel_mask (pwm1) | pwm_channel_mask (pwm2) | pwm_channel_mask (pwm3) | pwm_channel_mask (pwm4)    );
+    pwm_channels_start (pwm_channel_mask (pwm1)|pwm_channel_mask (pwm2)|pwm_channel_mask (pwm3)|pwm_channel_mask (pwm4)|pwm_channel_mask (pwm_servo));
     pio_config_set(nSLP_PIO, PIO_OUTPUT_HIGH);
 
     //radio part
@@ -244,8 +200,8 @@ main (void)
             nrf24_write(nrf, buffer, sizeof (buffer));
             delay_ms(6000);
         }
-        printf("%d\n", pio_input_get(TOP_SW));
-        printf("%d\n", pio_input_get(BOT_SW));
+        //printf("%d\n", pio_input_get(TOP_SW));
+        //printf("%d\n", pio_input_get(BOT_SW));
         /* Wait until next clock tick.  */
         pacer_wait ();
 
@@ -287,7 +243,7 @@ main (void)
         }
         //f: 5 b: 4 l: 3 r: 2
         int f = atoi(&buffer[3]);
-        printf("forward%d\n", f);
+        //printf("forward%d\n", f);
         int b = atoi(&buffer[9]);
 
         if(f>3000){
@@ -309,39 +265,18 @@ main (void)
             pio_config_set(PWM4_PIO, PIO_OUTPUT_LOW);//stop
         }
         
+        pwm_duty_set(pwm_servo, 0);
+        delay_ms(1000);
+        pwm_duty_set(pwm_servo, 100);
+        delay_ms(1000);
+        pwm_duty_set(pwm_servo, 500);
+        delay_ms(1000);
+        pwm_duty_set(pwm_servo, 1000);
+        delay_ms(1000);
+        pwm_duty_set(pwm_servo, 0);
+        delay_ms(1000);
 
-        // int x = atoi(&buffer[12]);
-        // printf("%d\n", x);
-        // if(x==1){
-        //     state++;
-        //     printf("state= %d\n", state);
-            
-        // }
-        // if(state > 2 && state < 5){
-        //     pwm_duty_set(pwm1, 800);
-        //     pio_config_set(PWM2_PIO, PIO_OUTPUT_LOW);
-        //     pwm_duty_set(pwm3, 800);
-        //     pio_config_set(PWM4_PIO, PIO_OUTPUT_LOW);//forward
-        // }
-        // if(state > 5 && state < 8){
-        //     pwm_duty_set(pwm1, 800);
-        //     pio_config_set(PWM2_PIO, PIO_OUTPUT_HIGH);
-        //     pwm_duty_set(pwm3, 800);
-        //     pio_config_set(PWM4_PIO, PIO_OUTPUT_HIGH);//backward
-        // }
-        // if(state > 8){
-        //     pwm_duty_set(pwm1, 0);
-        //     pio_config_set(PWM2_PIO, PIO_OUTPUT_LOW);
-        //     pwm_duty_set(pwm3, 0);
-        //     pio_config_set(PWM4_PIO, PIO_OUTPUT_LOW);//stop
-
-        // }
-
-
-        //driving_motor1(x, pwm1, PWM2_PIO, pwm3, PWM4_PIO);
-        //driving_motor2(x, pwm1, PWM2_PIO, pwm3, PWM4_PIO);
-
-    }
+        }
         
     
     return 0;
