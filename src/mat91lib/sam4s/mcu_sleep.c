@@ -15,22 +15,7 @@ mcu_sleep_wakeup_set (const mcu_sleep_wakeup_cfg_t *cfg)
 {
     static const pio_t wakeup_pins[] = 
         {
-            PA0_PIO,
-            PA1_PIO,
-            PA2_PIO,
-            PA4_PIO,
-            PA5_PIO,
-            PA8_PIO,
-            PA9_PIO,
-            PA11_PIO,
-            PA14_PIO,
-            PA19_PIO,
-            PA20_PIO,
-            PA30_PIO,
-            PB2_PIO,
-            PB5_PIO,
-            PA15_PIO,
-            PA16_PIO
+            PA2_PIO
         };
 
     if (!cfg)
@@ -81,7 +66,7 @@ mcu_sleep (const mcu_sleep_cfg_t *cfg)
            peripherals and memories are stopped but these devices are
            still powered.  */
 
-        /* TODO: set fast RC oscillator?  For flash low powr mode, set
+        /* TODO: set fast RC oscillator?  For flash low power mode, set
            FLPM bitfield in PMC_FSMR, set flash waitstate to 0.  */
 
         PMC->CKGR_MOR |= CKGR_MOR_KEY (0x37) | CKGR_MOR_WAITMODE;

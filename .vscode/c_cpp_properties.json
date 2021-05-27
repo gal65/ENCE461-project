@@ -19,7 +19,10 @@
                 "${workspaceFolder}/src/apps/hat_freertos/freertos/port",
                 "${workspaceFolder}/src/mmculib/usb_serial",
                 "${workspaceFolder}/src/mat91lib/sam4s/atmel",
-                "${workspaceFolder}/src/apps/common"
+                "${workspaceFolder}/src/apps/common",
+                "${workspaceFolder}/src/mat91lib",
+                "${workspaceFolder}/src/mat91lib/sam4s",
+                "${workspaceFolder}/src/mmculib"
             ]
         },
         {

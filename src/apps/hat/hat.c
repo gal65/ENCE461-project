@@ -13,6 +13,8 @@
 #include "config.h"
 #include "common.h"
 #include "kernel.h"
+#include "mcu_sleep.h"
+#include "tweeter.h"
 
 #define FIXED_POINT_EXP 1000
 
@@ -35,10 +37,18 @@ spi_cfg_t nrf_spi = {
     .bits = 8,
 };
 
-static const adc_cfg_t adc_cfg =
+static const adc_cfg_t adc_cfg_1 =
 {
     .bits = 12,
     .channel = ADC_CHANNEL_0,
+    .trigger = ADC_TRIGGER_SW,
+    .clock_speed_kHz = ADC_CLOCK_FREQ / 1000
+};
+
+static const adc_cfg_t adc_cfg_2 =
+{
+    .bits = 12,
+    .channel = ADC_CHANNEL_1,
     .trigger = ADC_TRIGGER_SW,
     .clock_speed_kHz = ADC_CLOCK_FREQ / 1000
 };
@@ -68,20 +78,45 @@ void blink2_task(void) {
     pio_output_toggle(LED2_PIO);
 }
 
+static tweeter_scale_t scale_table[] = TWEETER_SCALE_TABLE (1000);
+
+static const tweeter_private_t tweety =
+{
+    .note_clock = 1000,
+    .note_period = 200,
+    .note_duty = 200,
+    .note_holdoff = 50e-3,
+    .poll_rate = 1000,
+    .scale_table = &scale_table,
+};
+
+static const mcu_sleep_wakeup_cfg_t wake_up_pin=
+{
+    .pio = PA2_PIO,
+    .active_high = false
+};
+
+static const mcu_sleep_cfg_t sleepy_mode =
+{
+    .mode = MCU_SLEEP_MODE_BACKUP
+};
+
 int main (void)
 {
     nrf24_t* nrf = NULL;
     spi_t spi = NULL;
-    adc_t adc;
+    adc_t adc_1;
+    adc_t adc_2;
 
     movement_data_t move;    
 
     pio_config_set (LED1_PIO, PIO_OUTPUT_LOW);
     pio_config_set (LED2_PIO, PIO_OUTPUT_LOW);
+    pio_config_set(BUTTON_PIO, PIO_PULLUP);
 
     task_t tasks[] = {
         create_task(blink1_task, 400),
-        create_task(blink2_task, 500)
+        create_task(blink2_task, 800)
     };
 
     pio_output_toggle(LED1_PIO);
@@ -102,15 +137,27 @@ int main (void)
     mpu_t* mpu = mpu9250_create (twi_mpu, MPU_ADDRESS);
 
     pacer_init(10);
-    adc = adc_init (&adc_cfg);
+    adc_1 = adc_init (&adc_cfg_1);
+    adc_2 = adc_init (&adc_cfg_2);
 
-    
+    tweeter_init(&tweety, 1000, &scale_table);
+
     uint16_t data;
     while(1) {
         pacer_wait();
-        adc_read(adc, &data, sizeof(data));
+        tweeter_update(tweety);
+        adc_read(adc_1, &data, sizeof(data));
+        adc_read(adc_2, &data, sizeof(data));
+        printf("adc_1\n");
+        printf("adc_2\n");
         // sprintf(buffer, "f: %d b: 0 l: 0 r: 0\n", (int)data[0]);
         // nrf24_write(nrf, buffer, sizeof(buffer));
+        if (pio_input_get(BUTTON_PIO))
+        {
+            delay_ms(1000);
+            mcu_sleep_wakeup_set(&wake_up_pin);
+            mcu_sleep(&sleepy_mode);
+        }
         if (mpu)
         {
             /* read in the accelerometer data */
