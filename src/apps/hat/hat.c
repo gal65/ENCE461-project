@@ -73,8 +73,6 @@ int main (void)
     pacer_init(10);
     adc = adc_init (&adc_cfg);
 
-
-
     
     uint16_t data;
     while(1) {
@@ -115,7 +113,9 @@ int main (void)
                     if(movement_data.right_motor_direction == BACKWARD) {
                         movement_data.right_motor_pwm = 1000 - movement_data.right_motor_pwm;
                     }
-                    nrf24_write(nrf, &movement_data, sizeof(movement_data));
+                    // nrf24_write(nrf, &movement_data, sizeof(movement_data));
+                    char buffer[] = "test\n";
+                    nrf24_write(nrf, buffer, sizeof(buffer));
                 }
                 else
                 {
