@@ -12,6 +12,7 @@
 #include "mpu9250.h"
 #include "config.h"
 #include "common.h"
+#include "kernel.h"
 
 void radio_configuration(nrf24_t* nrf, spi_t* spi);
 
@@ -46,6 +47,14 @@ int16_t min(int16_t a, int16_t b) {
     return a < b ? a : b;
 }
 
+void blink1_task(void) {
+    pio_output_toggle(LED1_PIO);
+}
+
+void blink2_task(void) {
+    pio_output_toggle(LED2_PIO);
+}
+
 int main (void)
 {
     nrf24_t *nrf = NULL;
@@ -54,12 +63,21 @@ int main (void)
 
     movement_data_t movement_data;    
 
+    pio_config_set (LED1_PIO, PIO_OUTPUT_LOW);
+    pio_config_set (LED2_PIO, PIO_OUTPUT_LOW);
+
+    task_t tasks[] = {
+        create_task(blink1_task, 400),
+        create_task(blink2_task, 500)
+    };
+
+    pio_output_toggle(LED1_PIO);
+    kernel_run(tasks, 2);
+
     radio_configuration(nrf, spi);
 
     // Create non-blocking tty device for USB CDC connection.
     usb_serial_init (&usb_serial_cfg, "/dev/usb_tty");
-    pio_config_set (LED1_PIO, PIO_OUTPUT_LOW);
-    pio_config_set (LED2_PIO, PIO_OUTPUT_LOW);
     uint8_t flash_ticks = 0;
 
     freopen ("/dev/usb_tty", "a", stdout);

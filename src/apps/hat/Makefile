@@ -2,8 +2,8 @@ PERIPHERALS = adc
 DRIVERS = rf pacer usb_serial mpu led
 TARGET = hat.bin
 
-SRC = hat.c
-OPT = -O2
+SRC = $(wildcard *.c)
+OPT = -O0
 
 INCLUDES += -I../common
 SRC += ../common/common.c
