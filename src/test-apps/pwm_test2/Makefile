@@ -1,4 +1,4 @@
-PERIPHERALS = pwm pit
+PERIPHERALS = pwm pit adc
 
 DRIVERS = led pacer usb_serial rf ledtape
 
