@@ -10,6 +10,7 @@
 #include "mpu9250.h"
 #include "nrf24.h"
 #include "pio.h"
+#include "sound.h"
 #include "stdio.h"
 #include "tweeter.h"
 
@@ -38,7 +39,7 @@
 
 bool control_from_imu = true;
 
-void imu_task(void)
+void imu_control_task(void)
 {
     int16_t accel[3];
     char radio_send_buffer[32] = { 0 };
@@ -75,11 +76,12 @@ void imu_task(void)
     fflush(stdout);
 
     nrf24_write(nrf, radio_send_buffer, sizeof(radio_send_buffer));
+    nrf24_listen(nrf);
 
     pio_output_toggle(LED1_PIO);
 }
 
-void joystick_task(void)
+void joystick_control_task(void)
 {
     char radio_send_buffer[32] = { 0 };
     if (control_from_imu) {
@@ -98,11 +100,14 @@ void joystick_task(void)
 
     printf("%s\n", radio_send_buffer);
     fflush(stdout);
+
+    nrf24_write(nrf, radio_send_buffer, sizeof(radio_send_buffer));
+    nrf24_listen(nrf);
 }
 
-// Allows switching between imu_task and joystick_task depending on
+// Allows switching between imu_control_task and joystick_control_task depending on
 // the value of `control_from_imu`
-void control_method_button(void)
+void change_control_method_task(void)
 {
     static bool prev_button_state = true;
     bool button_state = pio_input_get(BUTTON_PIO);
@@ -115,14 +120,26 @@ void control_method_button(void)
     prev_button_state = button_state;
 }
 
+void check_bumber_task(void)
+{
+    char buffer[32];
+    if (nrf24_is_data_ready(nrf)) {
+        nrf24_read(nrf, buffer, sizeof(buffer));
+        // sound_play();
+        printf("BUMPER\n");
+        fflush(stdout);
+    }
+}
+
 int main(void)
 {
     init_hat();
 
     task_t tasks[] = {
-        { imu_task, 100, 0 },
-        { joystick_task, 100, 0 },
-        { control_method_button, 100, 0 },
+        { imu_control_task, 100, 0 },
+        { joystick_control_task, 100, 0 },
+        { change_control_method_task, 100, 0 },
+        { check_bumber_task, 100, 0 },
     };
 
     kernel_run(tasks, sizeof(tasks) / sizeof(task_t));

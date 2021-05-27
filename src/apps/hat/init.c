@@ -5,9 +5,12 @@
 #include "delay.h"
 #include "mpu9250.h"
 #include "nrf24.h"
+#include "sound.h"
 #include "usb_serial.h"
 
 #define ADC_CLOCK_FREQ 24000000
+
+#define USE_TEST_CHANNEL 0
 
 uint64_t RADIO_ADDRESSES[] = { 70, 80, 90, 100 };
 
@@ -64,6 +67,8 @@ void init_hat(void)
     pio_config_set(LED2_PIO, PIO_OUTPUT_HIGH);
     pio_config_set(BUTTON_PIO, PIO_PULLUP);
 
+    // sound_init();
+
     radio_configuration(&nrf, &nrf_spi);
 
     // Create non-blocking tty device for USB CDC connection.
@@ -93,10 +98,13 @@ void radio_configuration(nrf24_t** out_nrf, spi_t* out_spi)
     int addr_index = (pio_input_get(RADIO_JUMPER_1_PIO) << 1) | pio_input_get(RADIO_JUMPER_2_PIO);
     addr_index = 3;
 
-    // initialize the NRF24 radio with its unique 5 byte address
-    // if (!nrf24_begin(nrf, 4, RADIO_ADDRESSES[addr_index], 32)) panic();
-    if (!nrf24_begin(*out_nrf, 4, 100, 32))
+#if USE_TEST_CHANNEL
+    if (!nrf24_begin(*out_nrf, 4, 0x0123456789, 32))
         panic();
+#else
+    if (!nrf24_begin(*out_nrf, 4, RADIO_ADDRESSES[addr_index], 32))
+        panic();
+#endif
 }
 
 static void panic(void)
