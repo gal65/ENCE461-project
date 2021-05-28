@@ -3,6 +3,7 @@
 #include "adc.h"
 #include "config.h"
 #include "delay.h"
+#include "ledbuffer.h"
 #include "mpu9250.h"
 #include "nrf24.h"
 #include "sound.h"
@@ -61,10 +62,11 @@ adc_t joystick_x_adc = NULL;
 adc_t joystick_y_adc = NULL;
 adc_t battery_voltage_adc = NULL;
 mpu_t* imu = NULL;
-
-// private:
+ledbuffer_t* led_buffer = NULL;
 twi_t imu_twi = NULL;
 spi_t nrf_spi = NULL;
+
+#define NUM_LEDS 26
 
 void radio_configuration(nrf24_t** out_nrf, spi_t* out_spi);
 static void panic(void);
@@ -74,6 +76,7 @@ void init_hat(void)
     pio_config_set(LED1_PIO, PIO_OUTPUT_HIGH);
     pio_config_set(LED2_PIO, PIO_OUTPUT_HIGH);
     pio_config_set(BUTTON_PIO, PIO_PULLUP);
+    pio_config_set(JOYSTICK_BUTTON_PIO, PIO_PULLUP);
 
     // sound_init();
 
@@ -91,6 +94,8 @@ void init_hat(void)
     joystick_x_adc = adc_init(&adc_cfg_1);
     joystick_y_adc = adc_init(&adc_cfg_2);
     battery_voltage_adc = adc_init(&battery_voltage_adc_cfg);
+
+    led_buffer = ledbuffer_init(LEDTAPE_PIO, NUM_LEDS);
 }
 
 void radio_configuration(nrf24_t** out_nrf, spi_t* out_spi)
@@ -101,8 +106,8 @@ void radio_configuration(nrf24_t** out_nrf, spi_t* out_spi)
     if (!(*out_nrf))
         panic();
 
-    pio_config_set(RADIO_JUMPER_1_PIO, PIO_PULLDOWN);
-    pio_config_set(RADIO_JUMPER_1_PIO, PIO_PULLDOWN);
+    pio_config_set(RADIO_JUMPER_1_PIO, PIO_PULLUP);
+    pio_config_set(RADIO_JUMPER_2_PIO, PIO_PULLUP);
 
     int addr_index = (pio_input_get(RADIO_JUMPER_1_PIO) << 1) | pio_input_get(RADIO_JUMPER_2_PIO);
     addr_index = 3;

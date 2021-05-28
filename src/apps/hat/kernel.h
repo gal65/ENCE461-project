@@ -16,7 +16,8 @@ typedef struct {
     bool enabled;
 } task_t;
 
-void kernel_run(task_t* tasks, int num_tasks);
+void kernel_init(task_t* tasks_vec, int num_tasks);
+void kernel_run(void);
 
 task_t create_task(char* name, task_func_t func, uint32_t period_ms);
 

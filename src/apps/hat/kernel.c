@@ -7,12 +7,15 @@
 task_t* tasks = NULL;
 int tasks_len;
 
-void kernel_run(task_t* tasks_vec, int num_tasks)
+void kernel_init(task_t* tasks_vec, int num_tasks)
 {
-    pit_init();
-
     tasks = tasks_vec;
     tasks_len = num_tasks;
+}
+
+void kernel_run(void)
+{
+    pit_init();
 
     while (true) {
         for (int i = 0; i < tasks_len; i++) {

@@ -1,5 +1,5 @@
 PERIPHERALS = adc dac
-DRIVERS = rf pacer usb_serial mpu led
+DRIVERS = rf pacer usb_serial mpu ledtape
 TARGET = main.bin
 
 SRC = $(wildcard *.c)

@@ -33,6 +33,7 @@
 #define ADC_BATTERY PA31_PIO
 #define ADC_JOYSTICK_X PA17_PIO
 #define ADC_JOYSTICK_Y PA18_PIO
+#define JOYSTICK_BUTTON_PIO PA30_PIO
 
 /* IMU  */
 // NOT CONNECTED
@@ -41,6 +42,8 @@
 /* LEDs  */
 #define LED1_PIO PA0_PIO
 #define LED2_PIO PA1_PIO
+
+#define LEDTAPE_PIO PB0_PIO
 
 /* General  */
 // NOT CONNECTED

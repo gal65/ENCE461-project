@@ -4,12 +4,14 @@
 #include "common.h"
 #include "config.h"
 #include "control_mapping.h"
+#include "delay.h"
 #include "init.h"
 #include "kernel.h"
 #include "mcu_sleep.h"
 #include "mpu9250.h"
 #include "nrf24.h"
 #include "pio.h"
+#include "sleep.h"
 #include "sound.h"
 #include "stdio.h"
 #include "tweeter.h"
@@ -37,6 +39,7 @@
 //    .mode = MCU_SLEEP_MODE_BACKUP
 //};
 
+#define LOW_POWER_FEATURE 0
 #define PRINT_CONTROLLER_OUTPUT 1
 
 bool control_from_imu = true;
@@ -102,6 +105,8 @@ void joystick_control_task(void)
 
     nrf24_write(nrf, radio_send_buffer, sizeof(radio_send_buffer));
     nrf24_listen(nrf);
+
+    pio_output_toggle(LED1_PIO);
 }
 
 // Allows switching between imu_control_task and joystick_control_task depending on
@@ -109,7 +114,7 @@ void joystick_control_task(void)
 void change_control_method_task(void)
 {
     static bool prev_button_state = true;
-    bool button_state = pio_input_get(BUTTON_PIO);
+    bool button_state = pio_input_get(JOYSTICK_BUTTON_PIO);
 
     if (prev_button_state && !button_state) {
         control_from_imu = !control_from_imu;
@@ -141,12 +146,95 @@ void check_bumber_task(void)
 
 void battery_voltage_task(void)
 {
+#if LOW_POWER_FEATURE
     uint16_t bat;
     adc_read(battery_voltage_adc, &bat, sizeof(bat));
+
     if (bat < 2715) {
+        pio_output_low(LED2_PIO);
+        enter_low_power();
+    } else {
+        pio_output_high(LED2_PIO);
+        exit_low_power();
     }
-    printf("ADC: %d\n", bat);
-    fflush(stdout);
+#endif
+}
+
+mcu_sleep_cfg_t sleep_cfg = {
+    .mode = MCU_SLEEP_MODE_WAIT
+};
+
+mcu_sleep_wakeup_cfg_t wakeup_cfg = {
+    .pio = BUTTON_PIO,
+    .active_high = false
+};
+
+void check_sleep_mode_task(void)
+{
+    static bool prev_button_state = true;
+
+    bool button_state = pio_input_get(BUTTON_PIO);
+
+    if (prev_button_state && !button_state) {
+        delay_ms(1000);
+        mcu_sleep_wakeup_set(&wakeup_cfg);
+        mcu_sleep(&sleep_cfg);
+    }
+    prev_button_state = button_state;
+}
+
+#define DEC_AMOUNT 20
+uint8_t r_count = 255;
+uint8_t b_count = 0;
+uint8_t g_count = 0;
+typedef enum {
+    RED,
+    GREEN,
+    BLUE
+} dec_color_t;
+
+dec_color_t dec_color = RED;
+
+void ledtape_update(void)
+{
+    ledbuffer_advance(led_buffer, 1);
+    switch (dec_color) {
+    case RED:
+        r_count -= DEC_AMOUNT;
+        g_count += DEC_AMOUNT;
+        if (r_count <= DEC_AMOUNT) {
+            dec_color = GREEN;
+        }
+        break;
+    case GREEN:
+        g_count -= DEC_AMOUNT;
+        b_count += DEC_AMOUNT;
+        if (g_count <= DEC_AMOUNT) {
+            dec_color = BLUE;
+        }
+        break;
+    case BLUE:
+        b_count -= DEC_AMOUNT;
+        r_count += DEC_AMOUNT;
+        if (b_count <= DEC_AMOUNT) {
+            dec_color = RED;
+        }
+        break;
+    }
+    ledbuffer_set(led_buffer, 0, r_count, g_count, b_count);
+    ledbuffer_write(led_buffer);
+}
+
+void enter_low_power(void)
+{
+    ledbuffer_clear(led_buffer);
+    ledbuffer_write(led_buffer);
+    disable_task("leds");
+}
+
+void exit_low_power(void)
+{
+    enable_task("leds");
 }
 
 int main(void)
@@ -154,34 +242,36 @@ int main(void)
     init_hat();
 
     task_t tasks[] = {
+        create_task("leds", ledtape_update, 50),
         create_task("imu_control", imu_control_task, 100),
         create_task("joystick_control", joystick_control_task, 100),
         create_task("change_control", change_control_method_task, 100),
         create_task("bumper", check_bumber_task, 100),
+        create_task("sleep", check_sleep_mode_task, 100),
 
         // todo lower period
-        create_task("battery", battery_voltage_task, 500),
+        create_task("battery", battery_voltage_task, 5000),
     };
+    kernel_init(tasks, sizeof(tasks) / sizeof(task_t));
 
-    disable_task("joystick_control");
+    // disable_task("joystick_control");
+    kernel_run();
 
-    kernel_run(tasks, sizeof(tasks) / sizeof(task_t));
-
-    pacer_init(10);
+    // pacer_init(10);
     // tweeter_init(&tweety, 1000, &scale_table);
 
-    while (1) {
-        pacer_wait();
-        // tweeter_update(tweety);
-        // sprintf(joystick_x_adc, "\n");
-        // sprintf(joystick_y_adc, "\n");
-        // sprintf(buffer, "f: %d b: 0 l: 0 r: 0\n", (int)data[0]);
-        // nrf24_write(nrf, buffer, sizeof(buffer));
-        // if (pio_input_get(BUTTON_PIO))
-        //{
-        //    delay_ms(1000);
-        //    mcu_sleep_wakeup_set(&wake_up_pin);
-        //    mcu_sleep(&sleepy_mode);
-        //}
-    }
+    // while (1) {
+    // pacer_wait();
+    // tweeter_update(tweety);
+    // sprintf(joystick_x_adc, "\n");
+    // sprintf(joystick_y_adc, "\n");
+    // sprintf(buffer, "f: %d b: 0 l: 0 r: 0\n", (int)data[0]);
+    // nrf24_write(nrf, buffer, sizeof(buffer));
+    // if (pio_input_get(BUTTON_PIO))
+    //{
+    //    delay_ms(1000);
+    //    mcu_sleep_wakeup_set(&wake_up_pin);
+    //    mcu_sleep(&sleepy_mode);
+    //}
+    // }
 }

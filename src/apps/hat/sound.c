@@ -9,7 +9,7 @@ uint16_t buffer[4096] = { 0 };
 dac_cfg_t single_channel_dac_config = {
     .channel = DAC_CHANNEL_0,
     // default: only enable ch 0
-    .channels = 0,
+    .channels = BIT(DAC_CHANNEL_0),
     .bits = 12,
     .trigger = DAC_TRIGGER_SW,
     .clock_speed_kHz = 10,
@@ -41,5 +41,5 @@ void sound_init(void)
 
 void sound_play(void)
 {
-    // dac_write(dac, buffer, sizeof(buffer));
+    dac_write(dac, buffer, sizeof(buffer));
 }

@@ -14,10 +14,9 @@ extern "C" {
  * @param buffer The raw GRB buffer (8 bits per colour, 24 bits per LED).
  * @param size The size of the buffer in bytes (LEDs * 3).
  */
-void ledtape_write (pio_t pin, uint8_t *buffer, uint16_t size);
+void ledtape_write(pio_t pin, uint8_t* buffer, uint16_t size);
 
 #ifdef __cplusplus
 }
 #endif
 #endif
-
