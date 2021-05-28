@@ -2,7 +2,10 @@
 
 #include "config.h"
 #include "dac.h"
+#include "delay.h"
+#include "mmelody.h"
 #include "pio.h"
+#include "tweeter.h"
 
 uint16_t buffer[4096] = { 0 };
 
@@ -42,4 +45,56 @@ void sound_init(void)
 void sound_play(void)
 {
     dac_write(dac, buffer, sizeof(buffer));
+}
+
+#define POLL_RATE 20000
+#define TWEETER_TASK_RATE 20000
+#define TUNE_TASK_RATE 200
+#define TUNE_BPM_RATE 255
+
+static tweeter_t tweeter;
+static mmelody_t melody;
+static mmelody_obj_t melody_info;
+static tweeter_obj_t tweeter_info;
+
+// squeaker_scale_t scale_table[] = SQUEAKER_SCALE_TABLE(LOOP_POLL_RATE);
+static const char tune1[] = {
+#include "imperial_march.mmel"
+    "          :"
+};
+
+void tweet_sound_init(void)
+{
+    static tweeter_scale_t scale_table[] = TWEETER_SCALE_TABLE(TWEETER_TASK_RATE);
+    tweeter = tweeter_init(&tweeter_info, TWEETER_TASK_RATE, scale_table);
+    pio_config_set(BUZZER_PIO, PIO_OUTPUT_LOW);
+    melody = mmelody_init(&melody_info, TUNE_TASK_RATE,
+        (mmelody_callback_t)tweeter_note_play, tweeter);
+
+    mmelody_speed_set(melody, TUNE_BPM_RATE);
+
+    mmelody_play(melody, tune1);
+}
+
+static void tweeter_task(void)
+{
+    pio_output_set(BUZZER_PIO, tweeter_update(tweeter));
+}
+
+static void tune_task(void)
+{
+    mmelody_update(melody);
+}
+
+void tweet_sound_play(void)
+{
+    int ticks_per_melody = TWEETER_TASK_RATE / TUNE_TASK_RATE;
+
+    for (int i = 0; i < 80000; i++) {
+        DELAY_US(1000000 / TWEETER_TASK_RATE);
+        tweeter_task();
+        if (!(i % ticks_per_melody)) {
+            tune_task();
+        }
+    }
 }

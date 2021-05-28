@@ -54,6 +54,8 @@
 /* Button  */
 #define BUTTON_PIO PA2_PIO
 
+#define BUZZER_PIO PA27_PIO
+
 /* Radio  */
 #define RADIO_CS_PIO PA11_PIO
 #define RADIO_CE_PIO PA29_PIO

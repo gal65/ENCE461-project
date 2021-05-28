@@ -8,13 +8,15 @@
 #include "init.h"
 #include "kernel.h"
 #include "mcu_sleep.h"
+#include "mmelody.h"
 #include "mpu9250.h"
 #include "nrf24.h"
 #include "pio.h"
 #include "sleep.h"
 #include "sound.h"
+#include "spi.h"
 #include "stdio.h"
-#include "tweeter.h"
+#include "twi.h"
 
 // static tweeter_scale_t scale_table[] = TWEETER_SCALE_TABLE (1000);
 
@@ -39,7 +41,7 @@
 //    .mode = MCU_SLEEP_MODE_BACKUP
 //};
 
-#define LOW_POWER_FEATURE 0
+#define LOW_POWER_FEATURE 1
 #define PRINT_CONTROLLER_OUTPUT 1
 
 bool control_from_imu = true;
@@ -80,8 +82,6 @@ void imu_control_task(void)
 
     nrf24_write(nrf, radio_send_buffer, sizeof(radio_send_buffer));
     nrf24_listen(nrf);
-
-    pio_output_toggle(LED1_PIO);
 }
 
 void joystick_control_task(void)
@@ -105,8 +105,6 @@ void joystick_control_task(void)
 
     nrf24_write(nrf, radio_send_buffer, sizeof(radio_send_buffer));
     nrf24_listen(nrf);
-
-    pio_output_toggle(LED1_PIO);
 }
 
 // Allows switching between imu_control_task and joystick_control_task depending on
@@ -118,6 +116,7 @@ void change_control_method_task(void)
 
     if (prev_button_state && !button_state) {
         control_from_imu = !control_from_imu;
+        tweet_sound_play();
 
         if (control_from_imu) {
             disable_task("joystick_control");
@@ -138,7 +137,7 @@ void check_bumber_task(void)
     char buffer[32];
     if (nrf24_is_data_ready(nrf)) {
         nrf24_read(nrf, buffer, sizeof(buffer));
-        // sound_play();
+        tweet_sound_play();
         printf("BUMPER\n");
         fflush(stdout);
     }
@@ -176,9 +175,14 @@ void check_sleep_mode_task(void)
     bool button_state = pio_input_get(BUTTON_PIO);
 
     if (prev_button_state && !button_state) {
+        spi_shutdown(nrf_spi);
+        pio_output_low(RADIO_CE_PIO);
+        twi_shutdown(imu_twi);
+        enter_low_power();
         delay_ms(1000);
         mcu_sleep_wakeup_set(&wakeup_cfg);
         mcu_sleep(&sleep_cfg);
+        exit_low_power();
     }
     prev_button_state = button_state;
 }
@@ -237,11 +241,18 @@ void exit_low_power(void)
     enable_task("leds");
 }
 
+void blink_task(void)
+{
+    pio_output_toggle(LED1_PIO);
+}
+
 int main(void)
 {
     init_hat();
 
     task_t tasks[] = {
+        create_task("blink", blink_task, 500),
+        create_task("battery", battery_voltage_task, 5000),
         create_task("leds", ledtape_update, 50),
         create_task("imu_control", imu_control_task, 100),
         create_task("joystick_control", joystick_control_task, 100),
@@ -250,28 +261,8 @@ int main(void)
         create_task("sleep", check_sleep_mode_task, 100),
 
         // todo lower period
-        create_task("battery", battery_voltage_task, 5000),
     };
     kernel_init(tasks, sizeof(tasks) / sizeof(task_t));
 
-    // disable_task("joystick_control");
     kernel_run();
-
-    // pacer_init(10);
-    // tweeter_init(&tweety, 1000, &scale_table);
-
-    // while (1) {
-    // pacer_wait();
-    // tweeter_update(tweety);
-    // sprintf(joystick_x_adc, "\n");
-    // sprintf(joystick_y_adc, "\n");
-    // sprintf(buffer, "f: %d b: 0 l: 0 r: 0\n", (int)data[0]);
-    // nrf24_write(nrf, buffer, sizeof(buffer));
-    // if (pio_input_get(BUTTON_PIO))
-    //{
-    //    delay_ms(1000);
-    //    mcu_sleep_wakeup_set(&wake_up_pin);
-    //    mcu_sleep(&sleepy_mode);
-    //}
-    // }
 }

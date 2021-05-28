@@ -65,6 +65,10 @@ mpu_t* imu = NULL;
 ledbuffer_t* led_buffer = NULL;
 twi_t imu_twi = NULL;
 spi_t nrf_spi = NULL;
+// tweeter_t tweeter = NULL;
+
+// #define TWEETER_POLL_RATE 40000
+// tweeter_scale_t scale_table[] = TWEETER_SCALE_TABLE(TWEETER_POLL_RATE);
 
 #define NUM_LEDS 26
 
@@ -96,6 +100,7 @@ void init_hat(void)
     battery_voltage_adc = adc_init(&battery_voltage_adc_cfg);
 
     led_buffer = ledbuffer_init(LEDTAPE_PIO, NUM_LEDS);
+    tweet_sound_init();
 }
 
 void radio_configuration(nrf24_t** out_nrf, spi_t* out_spi)

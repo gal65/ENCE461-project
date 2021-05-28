@@ -5,6 +5,7 @@
 #include "ledbuffer.h"
 #include "mpu9250.h"
 #include "nrf24.h"
+#include "tweeter.h"
 
 extern nrf24_t* nrf;
 extern adc_t joystick_x_adc;
@@ -14,6 +15,7 @@ extern mpu_t* imu;
 extern ledbuffer_t* led_buffer;
 extern twi_t imu_twi;
 extern spi_t nrf_spi;
+extern tweeter_t tweeter;
 
 void init_hat(void);
 

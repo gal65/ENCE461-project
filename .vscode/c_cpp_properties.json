@@ -22,7 +22,8 @@
                 "${workspaceFolder}/src/apps/common",
                 "${workspaceFolder}/src/mat91lib",
                 "${workspaceFolder}/src/mat91lib/sam4s",
-                "${workspaceFolder}/src/mmculib"
+                "${workspaceFolder}/src/mmculib",
+                "${workspaceFolder}/src/apps/hat"
             ]
         },
         {
