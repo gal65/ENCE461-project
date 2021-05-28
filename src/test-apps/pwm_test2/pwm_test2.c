@@ -50,7 +50,7 @@
 
 /* Define how fast ticks occur.  This must be faster than
    TICK_RATE_MIN.  */
-enum {LOOP_POLL_RATE = 200};
+enum {LOOP_POLL_RATE = 20};
 
 /* Define LED flash rate in Hz.  */
 enum {LED_FLASH_RATE = 1};
@@ -96,13 +96,16 @@ static const pwm_cfg_t pwm4_cfg =
     .stop_state = PIO_OUTPUT_LOW
 };
 
+
+
+
 //paninc function for the radio
 static void panic(void)
 {
     while (1) {
         pio_output_toggle(LED1_PIO);
         pio_output_toggle(LED2_PIO);
-        delay_ms(10);
+        delay_ms(1000);
     }
 }
 
@@ -115,7 +118,7 @@ static int battery_sensor_init(void)
         .channel = BATTERY_VOLTAGE_ADC,
         .bits = 12,
         .trigger = ADC_TRIGGER_SW,
-        .clock_speed_kHz = 24000000 / 4000,
+        .clock_speed_kHz = F_CPU / 4000,
     };
 
     battery_sensor = adc_init(&bat);
@@ -130,8 +133,7 @@ static uint16_t battery_millivolts(void)
 
     // 5.6 pull down & 10k pull up gives a scale factor or
     // 5.6 / (5.6 + 10) = 0.3590
-    // (5.6 + 10) / 5.6 = 2.8 
-    // 4096 (max ADC readig) * 0.3590 ~= 1365
+    // 4096 (max ADC reading) * 0.3590 ~= 1365
     return (uint16_t)((int)s) * 3300 / 1365;
 }
 
@@ -168,7 +170,7 @@ main (void)
     pio_config_set(TOP_SW, PIO_INPUT_PULLUP);
     pio_config_set(BOT_SW, PIO_INPUT_PULLUP);
 
-    pacer_init (30);
+    pacer_init (LOOP_POLL_RATE);
     flash_ticks = 0;
     
     //Start pwm channels
@@ -203,9 +205,12 @@ main (void)
         panic();
     //
     if (battery_sensor_init() < 0)
-        panic();
+    panic();
     int state = 0;
     while (1){
+        pacer_wait();
+
+        pio_output_toggle (LED1_PIO);
         if (pio_input_get(TOP_SW) == 1 && pio_input_get(BOT_SW) == 1){
             nrf24_set_address(nrf, 100);
         }else if (pio_input_get(TOP_SW) == 1 && pio_input_get(BOT_SW) == 0){
@@ -225,13 +230,13 @@ main (void)
             nrf24_write(nrf, buffer, sizeof (buffer));
             delay_ms(6000);
         }
-        printf("%d\n",battery_millivolts());
-        if (battery_millivolts() < 3000) {
+
+        if (battery_millivolts() < 5000) {
             pio_config_set(LED2_PIO, PIO_OUTPUT_LOW);
         }else{
             pio_config_set(LED2_PIO, PIO_OUTPUT_HIGH);
         }
-        //printf("%d\n", pio_input_get(TOP_SW));
+        printf("%d\n", battery_millivolts());
         //printf("%d\n", pio_input_get(BOT_SW));
         /* Wait until next clock tick.  */
 
@@ -259,7 +264,7 @@ main (void)
             //printf("%s\n", buffer);
             //printf("%d\n", atoi(&buffer[12]));
             //pio_output_toggle(LED2_PIO);
-            pio_output_toggle(LED1_PIO);
+            pio_output_toggle(LED2_PIO);
             fflush(stdout);
         }
 
