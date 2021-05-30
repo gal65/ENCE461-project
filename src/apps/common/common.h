@@ -20,4 +20,8 @@ typedef struct {
 
 void print_movement_data(motor_data_t data);
 
+void imu_control_task(void);
+void joystick_control_task(void);
+void change_control_method_task(void);
+
 #endif

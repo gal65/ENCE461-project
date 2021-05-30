@@ -1,5 +1,5 @@
-#ifndef CONTROL_MAPPING_H
-#define CONTROL_MAPPING_H
+#ifndef CONTROL_H
+#define CONTROL_H
 
 #include "common.h"
 #include <stdint.h>

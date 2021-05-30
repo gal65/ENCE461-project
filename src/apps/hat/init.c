@@ -12,6 +12,7 @@
 #define ADC_CLOCK_FREQ 24000000
 
 #define USE_TEST_CHANNEL 0
+#define NRF_CHANNEL 15
 
 uint64_t RADIO_ADDRESSES[] = { 70, 80, 90, 100 };
 
@@ -121,7 +122,7 @@ void radio_configuration(nrf24_t** out_nrf, spi_t* out_spi)
     if (!nrf24_begin(*out_nrf, 4, 0x0123456789, 32))
         panic();
 #else
-    if (!nrf24_begin(*out_nrf, 4, RADIO_ADDRESSES[addr_index], 32))
+    if (!nrf24_begin(*out_nrf, 15, RADIO_ADDRESSES[addr_index], 32))
         panic();
 #endif
 }
