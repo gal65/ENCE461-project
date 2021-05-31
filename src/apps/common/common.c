@@ -29,7 +29,7 @@ void write_servo(pio_t pio, uint8_t position)
 {
     int us = position * 2200 / 255 + 600;
     int rest = 20000 - us;
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 5; i++) {
         pio_output_high(pio);
         DELAY_US(us);
         pio_output_low(pio);

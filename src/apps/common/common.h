@@ -1,6 +1,7 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+#include "pio.h"
 #include <stdint.h>
 // #include "nrf24.h"
 
@@ -19,9 +20,6 @@ typedef struct {
 // motor_data_t read_movement_data(nrf24_t nrf);
 
 void print_movement_data(motor_data_t data);
-
-void imu_control_task(void);
-void joystick_control_task(void);
-void change_control_method_task(void);
+void write_servo(pio_t pio, uint8_t position);
 
 #endif

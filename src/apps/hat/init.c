@@ -46,10 +46,12 @@ static const adc_cfg_t battery_voltage_adc_cfg = {
     .clock_speed_kHz = ADC_CLOCK_FREQ / 1000
 };
 
+#if USB_DEBUG
 static usb_serial_cfg_t usb_serial_cfg = {
     .read_timeout_us = 1,
     .write_timeout_us = 1,
 };
+#endif
 
 static twi_cfg_t mpu_twi_cfg = {
     .channel = TWI_CHANNEL_0,
@@ -87,11 +89,13 @@ void init_hat(void)
 
     radio_configuration(&nrf, &nrf_spi);
 
+#if USB_DEBUG
     // Create non-blocking tty device for USB CDC connection.
     usb_serial_init(&usb_serial_cfg, "/dev/usb_tty");
 
     freopen("/dev/usb_tty", "a", stdout);
     freopen("/dev/usb_tty", "r", stdin);
+#endif
 
     imu_twi = twi_init(&mpu_twi_cfg);
     imu = mpu9250_create(imu_twi, MPU_ADDRESS);

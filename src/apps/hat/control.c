@@ -1,8 +1,11 @@
 #include "control.h"
+#include "init.h"
+#include "kernel.h"
+#include "sound.h"
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 
-#define PRINT_CONTROLLER_OUTPUT 1
 #define FIXED_POINT_EXP 1000
 
 int32_t apply_response_curve(int32_t input, int32_t zero_thresh, int32_t sat_thresh, int32_t sat_output)
@@ -87,20 +90,26 @@ void imu_control_task(void)
     char radio_send_buffer[32] = { 0 };
 
     if (!imu) {
+#if USB_DEBUG
         printf("ERROR: can't find MPU9250!\n");
         fflush(stdout);
+#endif
         return;
     }
 
     if (!mpu9250_is_imu_ready(imu)) {
+#if USB_DEBUG
         printf("Waiting for IMU to be ready...\n");
         fflush(stdout);
+#endif
         return;
     }
 
     if (!mpu9250_read_accel(imu, accel)) {
+#if USB_DEBUG
         printf("ERROR: failed to read acceleration\n");
         fflush(stdout);
+#endif
         return;
     }
 
@@ -110,7 +119,7 @@ void imu_control_task(void)
         move.left_motor_direction, move.right_motor_direction,
         move.left_motor_pwm, move.right_motor_pwm);
 
-#if PRINT_CONTROLLER_OUTPUT
+#if USB_DEBUG
     printf("%s\n", radio_send_buffer);
     fflush(stdout);
 #endif
@@ -133,7 +142,7 @@ void joystick_control_task(void)
         move.left_motor_direction, move.right_motor_direction,
         move.left_motor_pwm, move.right_motor_pwm);
 
-#if PRINT_CONTROLLER_OUTPUT
+#if USB_DEBUG
     printf("%s\n", radio_send_buffer);
     fflush(stdout);
 #endif
@@ -161,8 +170,10 @@ void change_control_method_task(void)
             disable_task("imu_control");
         }
 
+#if USB_DEBUG
         printf("Control from IMU: %d\n", control_from_imu);
         fflush(stdout);
+#endif
     }
     prev_button_state = button_state;
 }

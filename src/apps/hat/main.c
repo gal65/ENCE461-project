@@ -19,17 +19,29 @@
 #include "stdio.h"
 #include "twi.h"
 
-#define LOW_POWER_FEATURE 0
-
 void check_bumber_task(void)
 {
     char buffer[32];
     if (nrf24_is_data_ready(nrf)) {
         nrf24_read(nrf, buffer, sizeof(buffer));
         tweet_sound_play();
+#if USB_DEBUG
         printf("BUMPER\n");
         fflush(stdout);
+#endif
     }
+}
+
+void enter_low_power(void)
+{
+    ledbuffer_clear(led_buffer);
+    ledbuffer_write(led_buffer);
+    disable_task("leds");
+}
+
+void exit_low_power(void)
+{
+    enable_task("leds");
 }
 
 void battery_voltage_task(void)
@@ -76,21 +88,23 @@ void check_sleep_mode_task(void)
     prev_button_state = button_state;
 }
 
-void enter_low_power(void)
-{
-    ledbuffer_clear(led_buffer);
-    ledbuffer_write(led_buffer);
-    disable_task("leds");
-}
-
-void exit_low_power(void)
-{
-    enable_task("leds");
-}
-
 int main(void)
 {
     init_hat();
+
+    // pio_config_set(PB3_PIO, PIO_OUTPUT_LOW);
+    // pio_config_set(LED2_PIO, PIO_OUTPUT_LOW);
+
+    // while (true) {
+    //     write_servo(PB3_PIO, 0);
+    //     write_servo(PB3_PIO, 0);
+    //     write_servo(PB3_PIO, 0);
+    //     delay_ms(500);
+    //     write_servo(PB3_PIO, 255);
+    //     write_servo(PB3_PIO, 255);
+    //     write_servo(PB3_PIO, 255);
+    //     delay_ms(500);
+    // }
 
     task_t tasks[] = {
         create_task("blink", blink_task, 500),
@@ -106,5 +120,6 @@ int main(void)
     };
     kernel_init(tasks, sizeof(tasks) / sizeof(task_t));
 
+    disable_task("joystick_control");
     kernel_run();
 }

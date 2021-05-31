@@ -7,6 +7,9 @@
 #include "nrf24.h"
 #include "tweeter.h"
 
+#define USB_DEBUG 0
+#define LOW_POWER_FEATURE 0
+
 extern nrf24_t* nrf;
 extern adc_t joystick_x_adc;
 extern adc_t joystick_y_adc;
