@@ -20,6 +20,12 @@ typedef struct {
 // motor_data_t read_movement_data(nrf24_t nrf);
 
 void print_movement_data(motor_data_t data);
-void write_servo(pio_t pio, uint8_t position);
+void write_servo_bitbang(pio_t pio, uint8_t position);
+
+#define SERVO_MIN_DUTY_MS 0.6
+#define SERVO_MAX_DUTY_MS 2.7
+
+void init_servo(pio_t pio);
+void set_servo(uint8_t position);
 
 #endif
