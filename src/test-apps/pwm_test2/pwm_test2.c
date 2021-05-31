@@ -199,7 +199,7 @@ main (void)
         panic();
 
     // initialize the NRF24 radio with its unique 5 byte address
-    if (!nrf24_begin(nrf, 4, 100, 32))
+    if (!nrf24_begin(nrf, 15, 100, 32))
         panic();
     if (!nrf24_listen(nrf))
         panic();
@@ -245,11 +245,11 @@ main (void)
             // wait for a revolution
             ledbuffer_clear(leds);
             if (blue) {
-                ledbuffer_set(leds, 0, 0, 0, 255);
-                ledbuffer_set(leds, NUM_LEDS / 2, 0, 0, 255);
+                ledbuffer_set(leds, 0, 0, 0, 100);
+                ledbuffer_set(leds, NUM_LEDS / 2, 0, 0, 100);
             } else {
-                ledbuffer_set(leds, 0, 255, 0, 0);
-                ledbuffer_set(leds, NUM_LEDS / 2, 255, 0, 0);
+                ledbuffer_set(leds, 0, 100, 0, 0);
+                ledbuffer_set(leds, NUM_LEDS / 2, 100, 0, 0);
             }
             blue = !blue;
             count = 0;
@@ -285,7 +285,6 @@ main (void)
             pio_config_set(PWM4_PIO, PIO_OUTPUT_HIGH);
         }
 
-        //motors(pwm1, pwm2, pwm3, duty_1, dir_1, duty_2, dir_2);
         
         
 
