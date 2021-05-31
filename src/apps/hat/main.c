@@ -13,6 +13,7 @@
 #include "mpu9250.h"
 #include "nrf24.h"
 #include "pio.h"
+#include "pwm.h"
 #include "sleep.h"
 #include "sound.h"
 #include "spi.h"
@@ -88,9 +89,49 @@ void check_sleep_mode_task(void)
     prev_button_state = button_state;
 }
 
-int main(void)
+#define PWM1_PIO PA24_PIO
+#define PWM2_PIO PA24_PIO
+
+#define PWM_FREQ_HZ 1000
+
+static const pwm_cfg_t pwm1_cfg =
+{
+    .pio = PWM1_PIO,
+    .period = PWM_PERIOD_DIVISOR (PWM_FREQ_HZ),
+    .duty = PWM_DUTY_DIVISOR (PWM_FREQ_HZ, 50),
+    .align = PWM_ALIGN_LEFT,
+    .polarity = PWM_POLARITY_LOW,
+    .stop_state = PIO_OUTPUT_LOW
+};
+
+static const pwm_cfg_t pwm2_cfg =
+{
+    .pio = PWM2_PIO,
+    .period = PWM_PERIOD_DIVISOR (PWM_FREQ_HZ),
+    .duty = PWM_DUTY_DIVISOR (PWM_FREQ_HZ, 25),
+    .align = PWM_ALIGN_LEFT,
+    .polarity = PWM_POLARITY_LOW,
+    .stop_state = PIO_OUTPUT_LOW
+};
+
+int main(void) 
 {
     init_hat();
+
+    pwm_t pwm1;
+    pwm1 = pwm_init (&pwm1_cfg);
+    pwm_t pwm2;
+    pwm2 = pwm_init (&pwm2_cfg);
+
+    while (1)
+    {
+        pwm_start (pwm1);
+        delay_ms(1000);
+        pwm_stop (pwm1);
+        pwm_start (pwm2);
+        delay_ms(1000);
+        pwm_stop (pwm2);
+    }
 
     // pio_config_set(PB3_PIO, PIO_OUTPUT_LOW);
     // pio_config_set(LED2_PIO, PIO_OUTPUT_LOW);
@@ -105,6 +146,8 @@ int main(void)
     //     write_servo(PB3_PIO, 255);
     //     delay_ms(500);
     // }
+
+    
 
     task_t tasks[] = {
         create_task("blink", blink_task, 500),

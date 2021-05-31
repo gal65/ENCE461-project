@@ -59,7 +59,7 @@ static tweeter_obj_t tweeter_info;
 
 // squeaker_scale_t scale_table[] = SQUEAKER_SCALE_TABLE(LOOP_POLL_RATE);
 static const char tune1[] = {
-#include "imperial_march.mmel"
+#include "sound.mmel"
     "          :"
 };
 

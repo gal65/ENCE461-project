@@ -23,7 +23,8 @@
                 "${workspaceFolder}/src/mat91lib",
                 "${workspaceFolder}/src/mat91lib/sam4s",
                 "${workspaceFolder}/src/mmculib",
-                "${workspaceFolder}/src/apps/hat"
+                "${workspaceFolder}/src/apps/hat",
+                "${workspaceFolder}/src/mat91lib/pwm"
             ]
         },
         {
@@ -40,7 +41,8 @@
                 "${workspaceFolder}/src/boards/racer",
                 "${workspaceFolder}/src/mat91lib/**",
                 "${workspaceFolder}/src/mmculib/**",
-                "${workspaceFolder}/src/apps/common"
+                "${workspaceFolder}/src/apps/common",
+                "${workspaceFolder}/src/mat91lib/pwm"
             ]
         }
     ],

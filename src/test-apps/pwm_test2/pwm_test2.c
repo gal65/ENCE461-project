@@ -229,6 +229,10 @@ main (void)
             sprintf (buffer, "1\r\n");
             nrf24_write(nrf, buffer, sizeof (buffer));
             delay_ms(6000);
+            pwm_duty_set(pwm1, 0);
+            pio_config_set(PWM2_PIO, PIO_OUTPUT_LOW);
+            pwm_duty_set(pwm3, 0);
+            pio_config_set(PWM4_PIO, PIO_OUTPUT_LOW);//stop
         }
 
         if (battery_millivolts() < 5000) {

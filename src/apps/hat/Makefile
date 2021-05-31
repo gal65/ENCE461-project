@@ -6,6 +6,7 @@ SRC = $(wildcard *.c)
 OPT = -O3
 
 INCLUDES += -I../../mmculib
+INCLUDES += -I../../mat91lib
 INCLUDES += -I../common
 SRC += ../common/common.c
 SRC += ../../mmculib/mmelody.c
