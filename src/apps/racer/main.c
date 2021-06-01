@@ -52,6 +52,13 @@ int motor_timeout_counter = 0;
 
 int main(void)
 {
+    // init_servo();
+    // for (;;) {
+    //     set_servo(0);
+    //     delay_ms(500);
+    //     set_servo(255);
+    //     delay_ms(500);
+    // }
     init_racer();
     pacer_init(PACER_RATE_HZ);
 
@@ -157,7 +164,7 @@ uint8_t color = 0;
 static void update_leds(void)
 {
     color_update_counter++;
-    if (color_update_counter % 2 == 0) {
+    if (color_update_counter % 1 == 0) {
         if (state == NORMAL) {
             color += 8;
             ledbuffer_set(leds, 0, 0, color < 128 ? 128 - color : color - 128, color < 128 ? color : 128 - (color - 128));

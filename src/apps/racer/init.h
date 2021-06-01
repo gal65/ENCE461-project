@@ -18,7 +18,7 @@ extern adc_t battery_sensor;
 
 #define NUM_LEDS 26
 
-#define ENABLE_USB 1
+#define ENABLE_USB 0
 
 void init_racer(void);
 #endif
