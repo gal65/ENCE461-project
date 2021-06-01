@@ -11,5 +11,6 @@ motor_data_t get_motor_values_joystick(uint16_t x_data, uint16_t y_data);
 void imu_control_task(void);
 void joystick_control_task(void);
 void change_control_method_task(void);
+uint8_t update_servo_position_task(void);
 
 #endif
