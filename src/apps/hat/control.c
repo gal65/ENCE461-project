@@ -110,6 +110,27 @@ motor_data_t get_motor_values_joystick(uint16_t x_data, uint16_t y_data)
 
 // TASKS:
 
+uint8_t update_servo_position_task(void)
+{
+    uint8_t servo_position;
+    if (pio_input_get(BLACK_BUTTON_PIO) == false) {
+        // check black button
+        // set_servo(0);
+        pio_output_low(STATUS_LED_B_PIO);
+        pio_output_high(STATUS_LED_R_PIO);
+        delay_ms(250);
+        servo_position = 0;
+    } else if (pio_input_get(RED_BUTTON_PIO) == false) { 
+        // check red button
+        // set_servo(255);
+        pio_output_low(STATUS_LED_R_PIO);
+        pio_output_high(STATUS_LED_B_PIO);
+        delay_ms(250);
+        servo_position = 255;
+    }
+    return servo_position;
+}
+
 bool control_from_imu = true;
 
 void imu_control_task(void)
@@ -143,9 +164,11 @@ void imu_control_task(void)
 
     motor_data_t move = get_motor_values_imu(accel);
 
-    snprintf(radio_send_buffer, sizeof(radio_send_buffer), "%d %d %-4lu %-4lu",
+    uint8_t new_servo_position = update_servo_position_task();
+
+    snprintf(radio_send_buffer, sizeof(radio_send_buffer), "%d %d %-4lu %-4lu %-4d",
         move.left_motor_direction, move.right_motor_direction,
-        move.left_motor_pwm, move.right_motor_pwm);
+        move.left_motor_pwm, move.right_motor_pwm, new_servo_position);
 
 #if USB_DEBUG
     printf("%s\n", radio_send_buffer);
