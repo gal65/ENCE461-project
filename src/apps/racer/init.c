@@ -15,8 +15,8 @@
 //battery
 #define BATTERY_VOLTAGE_ADC ADC_CHANNEL_8
 
-static const pwm_cfg_t pwm1_cfg = {
-    .pio = PWM1_PIO,
+static const pwm_cfg_t left_motor_pwm_cfg = {
+    .pio = LEFT_MOTOR_PWM_PIO,
     .period = PWM_PERIOD_DIVISOR(PWM_FREQ_HZ),
     .duty = PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 0),
     .align = PWM_ALIGN_LEFT,
@@ -25,7 +25,7 @@ static const pwm_cfg_t pwm1_cfg = {
 };
 
 // static const pwm_cfg_t pwm2_cfg = {
-//     .pio = PWM2_PIO,
+//     .pio = LEFT_MOTOR_DIRECTION_PIO,
 //     .period = PWM_PERIOD_DIVISOR(PWM_FREQ_HZ),
 //     .duty = PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 0),
 //     .align = PWM_ALIGN_LEFT,
@@ -33,8 +33,8 @@ static const pwm_cfg_t pwm1_cfg = {
 //     .stop_state = PIO_OUTPUT_LOW
 // };
 
-static const pwm_cfg_t pwm3_cfg = {
-    .pio = PWM3_PIO,
+static const pwm_cfg_t right_motor_pwm_cfg = {
+    .pio = RIGHT_MOTOR_PWM_PIO,
     .period = PWM_PERIOD_DIVISOR(PWM_FREQ_HZ),
     .duty = PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 0),
     .align = PWM_ALIGN_LEFT,
@@ -43,7 +43,7 @@ static const pwm_cfg_t pwm3_cfg = {
 };
 
 // static const pwm_cfg_t pwm4_cfg = {
-//     .pio = PWM4_PIO,
+//     .pio = RIGHT_MOTOR_DIRECTION_PIO,
 //     .period = PWM_PERIOD_DIVISOR(PWM_FREQ_HZ),
 //     .duty = PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 0),
 //     .align = PWM_ALIGN_LEFT,
@@ -78,9 +78,9 @@ static int battery_sensor_init(void)
 //LED strip
 ledbuffer_t* leds;
 
-pwm_t pwm1;
+pwm_t left_motor_pwm;
 // pwm_t pwm2;
-pwm_t pwm3;
+pwm_t right_motor_pwm;
 // pwm_t pwm4;
 
 nrf24_t* nrf;
@@ -98,9 +98,9 @@ static void panic(void)
 
 void init_racer(void)
 {
-    pwm1 = pwm_init(&pwm1_cfg);
+    left_motor_pwm = pwm_init(&left_motor_pwm_cfg);
     // pwm2 = pwm_init(&pwm2_cfg);
-    pwm3 = pwm_init(&pwm3_cfg);
+    right_motor_pwm = pwm_init(&right_motor_pwm_cfg);
     // pwm4 = pwm_init(&pwm4_cfg);
 
     // init_servo();
@@ -118,12 +118,12 @@ void init_racer(void)
     pio_config_set(TOP_SW, PIO_INPUT_PULLUP);
     pio_config_set(BOT_SW, PIO_INPUT_PULLUP);
 
-    pio_config_set(PWM2_PIO, PIO_OUTPUT_LOW);
-    pio_config_set(PWM4_PIO, PIO_OUTPUT_LOW);
+    pio_config_set(LEFT_MOTOR_DIRECTION_PIO, PIO_OUTPUT_LOW);
+    pio_config_set(RIGHT_MOTOR_DIRECTION_PIO, PIO_OUTPUT_LOW);
 
     //Start pwm channels
-    // pwm_channels_start(pwm_channel_mask(servo_pwm) | pwm_channel_mask(pwm1) | pwm_channel_mask(pwm2) | pwm_channel_mask(pwm3) | pwm_channel_mask(pwm4));
-    pwm_channels_start(pwm_channel_mask(servo_pwm) | pwm_channel_mask(pwm1) | pwm_channel_mask(pwm3));
+    // pwm_channels_start(pwm_channel_mask(servo_pwm) | pwm_channel_mask(left_motor_pwm) | pwm_channel_mask(pwm2) | pwm_channel_mask(right_motor_pwm) | pwm_channel_mask(pwm4));
+    pwm_channels_start(pwm_channel_mask(servo_pwm) | pwm_channel_mask(left_motor_pwm) | pwm_channel_mask(right_motor_pwm));
     pio_config_set(nSLP_PIO, PIO_OUTPUT_HIGH);
 
     //radio part
