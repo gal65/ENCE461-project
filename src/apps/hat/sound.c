@@ -30,11 +30,6 @@ void sound_init(void)
         buffer[i] = i;
     }
 
-    // for(int i = 128; i < 256; i++) {
-    // buffer[i] = 4096 - (255 - i)*16;
-    // }
-    //
-
     dac_enable(dac);
     while (true) {
         sound_play();
