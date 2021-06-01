@@ -7,7 +7,7 @@
 #include "nrf24.h"
 #include "tweeter.h"
 
-#define USB_DEBUG 1
+#define USB_DEBUG 0
 #define LOW_POWER_FEATURE 0
 
 extern nrf24_t* nrf;

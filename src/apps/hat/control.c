@@ -8,7 +8,7 @@
 #include <stdlib.h>
 
 #define FIXED_POINT_EXP 1000
-#define DO_TANK_TURN 0
+#define DO_TANK_TURN 1
 
 uint16_t lfsr_key = 0xB00B;
 
@@ -40,26 +40,28 @@ void reverse_duty(mosi_comms_t* move)
     }
 }
 
-mosi_comms_t pwm_from_xy(int32_t forward_back, int32_t left_right)
+mosi_comms_t pwm_from_xy(int32_t forward_back, int32_t left_right, int32_t tank_lr)
 {
     mosi_comms_t move;
 
 #if DO_TANK_TURN
     if (forward_back == 0) {
-        if (left_right > 0) {
-            move.right_motor_direction = FORWARD;
-            move.left_motor_direction = BACKWARD;
-        } else if (left_right < 0) {
+        if (tank_lr > 0) {
+            move.right_motor_pwm = tank_lr;
+            move.left_motor_pwm = tank_lr;
             move.right_motor_direction = BACKWARD;
             move.left_motor_direction = FORWARD;
+        } else if (tank_lr < 0) {
+            move.right_motor_pwm = -tank_lr;
+            move.left_motor_pwm = -tank_lr;
+            move.right_motor_direction = FORWARD;
+            move.left_motor_direction = BACKWARD;
         } else {
-            // no movement
+            move.left_motor_pwm = 0;
+            move.right_motor_pwm = 0;
             move.left_motor_direction = FORWARD;
             move.right_motor_direction = FORWARD;
         }
-        move.left_motor_pwm = left_right;
-        move.right_motor_pwm = left_right;
-
         reverse_duty(&move);
         return move;
     }
@@ -88,9 +90,10 @@ mosi_comms_t pwm_from_xy(int32_t forward_back, int32_t left_right)
 
 mosi_comms_t get_motor_values_imu(int16_t* accel_data)
 {
-    int32_t forward_back = apply_response_curve(accel_data[1], 2000, 6000, 1000);
-    int32_t left_right = apply_response_curve(accel_data[0], 1000, 8000, 700);
-    return pwm_from_xy(forward_back, left_right);
+    int32_t forward_back = apply_response_curve(accel_data[1], 4000, 6000, 1000);
+    int32_t left_right = apply_response_curve(accel_data[0], 3000, 9000, 140);
+    int32_t tank_lr = apply_response_curve(accel_data[0], 2000, 6000, 600);
+    return pwm_from_xy(forward_back, left_right, tank_lr);
 }
 
 #define X_LEFT 3800
@@ -108,7 +111,7 @@ mosi_comms_t get_motor_values_joystick(uint16_t x_data, uint16_t y_data)
     conditioned_x = -apply_response_curve(conditioned_x, 100, 900, 1000);
     conditioned_y = -apply_response_curve(conditioned_y, 100, 400, 1000);
 
-    return pwm_from_xy(conditioned_y, conditioned_x);
+    return pwm_from_xy(conditioned_y, conditioned_x, conditioned_x);
 }
 
 // TASKS:
