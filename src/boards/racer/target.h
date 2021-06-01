@@ -50,6 +50,8 @@
 //nSLEEP
 #define nSLP_PIO PA29_PIO
 
+#define SERVO_PIO PA24_PIO
+
 //define bumper pin
 #define BUMPER_DETECT PA30_PIO
 

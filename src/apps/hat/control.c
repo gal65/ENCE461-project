@@ -8,7 +8,7 @@
 #include <stdlib.h>
 
 #define FIXED_POINT_EXP 1000
-#define DO_TANK_TURN 1
+#define DO_TANK_TURN 0
 
 int32_t apply_response_curve(int32_t input, int32_t zero_thresh, int32_t sat_thresh, int32_t sat_output)
 {
@@ -28,7 +28,7 @@ int32_t apply_response_curve(int32_t input, int32_t zero_thresh, int32_t sat_thr
     }
 }
 
-void reverse_duty(motor_data_t* move)
+void reverse_duty(mosi_comms_t* move)
 {
     if (move->left_motor_direction == BACKWARD) {
         move->left_motor_pwm = 1000 - move->left_motor_pwm;
@@ -38,9 +38,9 @@ void reverse_duty(motor_data_t* move)
     }
 }
 
-motor_data_t pwm_from_xy(int32_t forward_back, int32_t left_right)
+mosi_comms_t pwm_from_xy(int32_t forward_back, int32_t left_right)
 {
-    motor_data_t move;
+    mosi_comms_t move;
 
 #if DO_TANK_TURN
     if (forward_back == 0) {
@@ -84,7 +84,7 @@ motor_data_t pwm_from_xy(int32_t forward_back, int32_t left_right)
     return move;
 }
 
-motor_data_t get_motor_values_imu(int16_t* accel_data)
+mosi_comms_t get_motor_values_imu(int16_t* accel_data)
 {
     int32_t forward_back = apply_response_curve(accel_data[1], 2000, 6000, 1000);
     int32_t left_right = apply_response_curve(accel_data[0], 1000, 8000, 700);
@@ -96,9 +96,9 @@ motor_data_t get_motor_values_imu(int16_t* accel_data)
 #define Y_UP 60
 #define Y_DOWN 3800
 
-motor_data_t get_motor_values_joystick(uint16_t x_data, uint16_t y_data)
+mosi_comms_t get_motor_values_joystick(uint16_t x_data, uint16_t y_data)
 {
-    motor_data_t move;
+    mosi_comms_t move;
     int32_t conditioned_x = ((int32_t)x_data - X_RIGHT) * 2000 / (X_LEFT - X_RIGHT) - 1000;
     int32_t conditioned_y = ((int32_t)y_data - Y_UP) * 2000 / (Y_DOWN - Y_UP) - 1000;
 
@@ -111,25 +111,32 @@ motor_data_t get_motor_values_joystick(uint16_t x_data, uint16_t y_data)
 
 // TASKS:
 
-uint8_t update_servo_position_task(void)
+uint8_t read_servo_position(void)
 {
-    uint8_t servo_position;
-    if (pio_input_get(BLACK_BUTTON_PIO) == false) {
-        // check black button
-        // set_servo(0);
+    // if (pio_input_get(BLACK_BUTTON_PIO) == false) {
+    //     // check black button
+    //     // set_servo(0);
+    //     pio_output_low(STATUS_LED_B_PIO);
+    //     pio_output_high(STATUS_LED_R_PIO);
+    //     // delay_ms(250);
+    //     servo_position = 0;
+    // } else if (pio_input_get(RED_BUTTON_PIO) == false) {
+    //     // check red button
+    //     // set_servo(255);
+    //     pio_output_low(STATUS_LED_R_PIO);
+    //     pio_output_high(STATUS_LED_B_PIO);
+    //     // delay_ms(250);
+    //     servo_position = 255;
+    // }
+    if (!pio_input_get(RED_BUTTON_PIO)) {
         pio_output_low(STATUS_LED_B_PIO);
         pio_output_high(STATUS_LED_R_PIO);
-        // delay_ms(250);
-        servo_position = 0;
-    } else if (pio_input_get(RED_BUTTON_PIO) == false) {
-        // check red button
-        // set_servo(255);
+        return 0;
+    } else {
         pio_output_low(STATUS_LED_R_PIO);
         pio_output_high(STATUS_LED_B_PIO);
-        // delay_ms(250);
-        servo_position = 255;
+        return 255;
     }
-    return servo_position;
 }
 
 bool control_from_imu = true;
@@ -137,7 +144,7 @@ bool control_from_imu = true;
 void imu_control_task(void)
 {
     int16_t accel[3];
-    char radio_send_buffer[32] = { 0 };
+    // char radio_send_buffer[32] = { 0 };
 
     if (!imu) {
 #if USB_DEBUG
@@ -163,45 +170,37 @@ void imu_control_task(void)
         return;
     }
 
-    motor_data_t move = get_motor_values_imu(accel);
+    mosi_comms_t move = get_motor_values_imu(accel);
 
-    uint8_t new_servo_position = update_servo_position_task();
-
-    snprintf(radio_send_buffer, sizeof(radio_send_buffer), "%d %d %-4lu %-4lu %-4d",
-        move.left_motor_direction, move.right_motor_direction,
-        move.left_motor_pwm, move.right_motor_pwm, new_servo_position);
+    move.servo_position = read_servo_position();
 
 #if USB_DEBUG
-    printf("%s\n", radio_send_buffer);
+    print_mosi_comms(move);
     fflush(stdout);
 #endif
 
-    nrf24_write(nrf, radio_send_buffer, sizeof(radio_send_buffer));
+    nrf24_write(nrf, &move, sizeof(mosi_comms_t));
     nrf24_listen(nrf);
 }
 
 void joystick_control_task(void)
 {
-    char radio_send_buffer[32] = { 0 };
+    // char radio_send_buffer[32] = { 0 };
 
     uint16_t x_data, y_data;
     adc_read(joystick_x_adc, &x_data, sizeof(x_data));
     adc_read(joystick_y_adc, &y_data, sizeof(y_data));
 
-    motor_data_t move = get_motor_values_joystick(x_data, y_data);
+    mosi_comms_t move = get_motor_values_joystick(x_data, y_data);
 
-    uint8_t new_servo_position = update_servo_position_task();
-
-    snprintf(radio_send_buffer, sizeof(radio_send_buffer), "%d %d %-4lu %-4lu %-4d",
-        move.left_motor_direction, move.right_motor_direction,
-        move.left_motor_pwm, move.right_motor_pwm, new_servo_position);
+    move.servo_position = read_servo_position();
 
 #if USB_DEBUG
-    printf("%s\n", radio_send_buffer);
+    print_mosi_comms(move);
     fflush(stdout);
 #endif
 
-    nrf24_write(nrf, radio_send_buffer, sizeof(radio_send_buffer));
+    nrf24_write(nrf, &move, sizeof(mosi_comms_t));
     nrf24_listen(nrf);
 }
 

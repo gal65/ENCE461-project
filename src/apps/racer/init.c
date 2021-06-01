@@ -10,8 +10,6 @@
 #include "usb_serial.h"
 #include <stdio.h>
 
-#define ENABLE_USB 0
-
 #define PWM_FREQ_HZ 100e3
 
 //battery
@@ -20,38 +18,38 @@
 static const pwm_cfg_t pwm1_cfg = {
     .pio = PWM1_PIO,
     .period = PWM_PERIOD_DIVISOR(PWM_FREQ_HZ),
-    .duty = PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 50),
+    .duty = PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 0),
     .align = PWM_ALIGN_LEFT,
     .polarity = PWM_POLARITY_LOW,
     .stop_state = PIO_OUTPUT_LOW
 };
 
-static const pwm_cfg_t pwm2_cfg = {
-    .pio = PWM2_PIO,
-    .period = PWM_PERIOD_DIVISOR(PWM_FREQ_HZ),
-    .duty = PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 50),
-    .align = PWM_ALIGN_LEFT,
-    .polarity = PWM_POLARITY_HIGH,
-    .stop_state = PIO_OUTPUT_LOW
-};
+// static const pwm_cfg_t pwm2_cfg = {
+//     .pio = PWM2_PIO,
+//     .period = PWM_PERIOD_DIVISOR(PWM_FREQ_HZ),
+//     .duty = PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 0),
+//     .align = PWM_ALIGN_LEFT,
+//     .polarity = PWM_POLARITY_HIGH,
+//     .stop_state = PIO_OUTPUT_LOW
+// };
 
 static const pwm_cfg_t pwm3_cfg = {
     .pio = PWM3_PIO,
     .period = PWM_PERIOD_DIVISOR(PWM_FREQ_HZ),
-    .duty = PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 50),
+    .duty = PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 0),
     .align = PWM_ALIGN_LEFT,
     .polarity = PWM_POLARITY_LOW,
     .stop_state = PIO_OUTPUT_LOW
 };
 
-static const pwm_cfg_t pwm4_cfg = {
-    .pio = PWM4_PIO,
-    .period = PWM_PERIOD_DIVISOR(PWM_FREQ_HZ),
-    .duty = PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 50),
-    .align = PWM_ALIGN_LEFT,
-    .polarity = PWM_POLARITY_HIGH,
-    .stop_state = PIO_OUTPUT_LOW
-};
+// static const pwm_cfg_t pwm4_cfg = {
+//     .pio = PWM4_PIO,
+//     .period = PWM_PERIOD_DIVISOR(PWM_FREQ_HZ),
+//     .duty = PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 0),
+//     .align = PWM_ALIGN_LEFT,
+//     .polarity = PWM_POLARITY_HIGH,
+//     .stop_state = PIO_OUTPUT_LOW
+// };
 
 #if ENABLE_USB
 static usb_serial_cfg_t usb_serial_cfg = {
@@ -81,9 +79,9 @@ static int battery_sensor_init(void)
 ledbuffer_t* leds;
 
 pwm_t pwm1;
-pwm_t pwm2;
+// pwm_t pwm2;
 pwm_t pwm3;
-pwm_t pwm4;
+// pwm_t pwm4;
 
 nrf24_t* nrf;
 spi_t spi;
@@ -101,13 +99,17 @@ static void panic(void)
 void init_racer(void)
 {
     pwm1 = pwm_init(&pwm1_cfg);
-    pwm2 = pwm_init(&pwm2_cfg);
+    // pwm2 = pwm_init(&pwm2_cfg);
     pwm3 = pwm_init(&pwm3_cfg);
-    pwm4 = pwm_init(&pwm4_cfg);
+    // pwm4 = pwm_init(&pwm4_cfg);
+
+    // init_servo();
 
     /* Configure LED PIO as output.  */
     pio_config_set(LED1_PIO, PIO_OUTPUT_HIGH);
     pio_config_set(LED2_PIO, PIO_OUTPUT_HIGH);
+
+    pio_config_set(SERVO_PIO, PIO_OUTPUT_LOW);
 
     //configure Bumper to be NO(normally open) to set bumper_activite to high
     pio_config_set(BUMPER_DETECT, PIO_INPUT_PULLUP);
@@ -116,8 +118,12 @@ void init_racer(void)
     pio_config_set(TOP_SW, PIO_INPUT_PULLUP);
     pio_config_set(BOT_SW, PIO_INPUT_PULLUP);
 
+    pio_config_set(PWM2_PIO, PIO_OUTPUT_LOW);
+    pio_config_set(PWM4_PIO, PIO_OUTPUT_LOW);
+
     //Start pwm channels
-    pwm_channels_start(pwm_channel_mask(pwm1) | pwm_channel_mask(pwm2) | pwm_channel_mask(pwm3) | pwm_channel_mask(pwm4));
+    // pwm_channels_start(pwm_channel_mask(servo_pwm) | pwm_channel_mask(pwm1) | pwm_channel_mask(pwm2) | pwm_channel_mask(pwm3) | pwm_channel_mask(pwm4));
+    pwm_channels_start(pwm_channel_mask(servo_pwm) | pwm_channel_mask(pwm1) | pwm_channel_mask(pwm3));
     pio_config_set(nSLP_PIO, PIO_OUTPUT_HIGH);
 
     //radio part
@@ -150,5 +156,4 @@ void init_racer(void)
     if (battery_sensor_init() < 0)
         panic();
     leds = ledbuffer_init(LEDTAPE_PIO, NUM_LEDS);
-    init_servo(PA24_PIO);
 }

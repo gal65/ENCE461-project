@@ -6,19 +6,20 @@
 #include <stdio.h>
 // #include "nrf24.h"
 
-// motor_data_t read_movement_data(nrf24_t nrf) {
-//     static motor_data_t data;
-//     nrf24_read(nrf, &data, sizeof(motor_data_t));
+// mosi_comms_t read_movement_data(nrf24_t nrf) {
+//     static mosi_comms_t data;
+//     nrf24_read(nrf, &data, sizeof(mosi_comms_t));
 //     return data;
 // }
 
-void print_movement_data(motor_data_t data)
+void print_mosi_comms(mosi_comms_t data)
 {
-    printf("left: %lu %s, right %lu %s\n",
+    printf("left: %-4lu %s, right %-4lu %s, servo %d\n",
         data.left_motor_pwm,
-        data.left_motor_direction == FORWARD ? "FORWARD" : "BACKWARD",
+        data.left_motor_direction == FORWARD ? "FORWD" : "BAKWD",
         data.right_motor_pwm,
-        data.left_motor_direction == FORWARD ? "FORWARD" : "BACKWARD");
+        data.left_motor_direction == FORWARD ? "FORWD" : "BAKWD",
+        data.servo_position);
 }
 
 // positino 0 -> 255
@@ -38,11 +39,11 @@ void write_servo_bitbang(pio_t pio, uint8_t position)
     }
 }
 
-#define PWM_FREQ_HZ 50
+#define SERVO_PWM_FREQ_HZ 50
 static pwm_cfg_t servo_pwm_cfg = {
-    .pio = 0,
-    .period = PWM_PERIOD_DIVISOR(PWM_FREQ_HZ),
-    .duty = PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 0),
+    .pio = PA24_PIO,
+    .period = PWM_PERIOD_DIVISOR(SERVO_PWM_FREQ_HZ),
+    .duty = PWM_DUTY_DIVISOR(SERVO_PWM_FREQ_HZ, 0),
     .align = PWM_ALIGN_LEFT,
     .polarity = PWM_POLARITY_HIGH,
     .stop_state = PIO_OUTPUT_LOW
@@ -50,11 +51,10 @@ static pwm_cfg_t servo_pwm_cfg = {
 
 pwm_t servo_pwm;
 
-void init_servo(pio_t pio)
+void init_servo(void)
 {
-    servo_pwm_cfg.pio = pio;
     servo_pwm = pwm_init(&servo_pwm_cfg);
-    pwm_channels_start(pwm_channel_mask(servo_pwm));
+    // pwm_channels_start(pwm_channel_mask(servo_pwm));
 }
 
 #define TO_CPU_CLKS(MS) ((MS)*F_CPU / 1000)
