@@ -25,7 +25,9 @@ void check_bumber_task(void)
     char buffer[32];
     if (nrf24_is_data_ready(nrf)) {
         nrf24_read(nrf, buffer, sizeof(buffer));
-        tweet_sound_play();
+        if (buffer[0] == "1") {
+            tweet_sound_play();
+        }
 #if USB_DEBUG
         printf("BUMPER\n");
         fflush(stdout);
@@ -97,10 +99,10 @@ int main(void)
     init_hat();
     // init_servo(PA24_PIO);
     // while (true) {
-    // set_servo(0);
-    // delay_ms(500);
-    // set_servo(255);
-    // delay_ms(500);
+    //     set_servo(0);
+    //     delay_ms(500);
+    //     set_servo(255);
+    //     delay_ms(500);
     // }
 
     task_t tasks[] = {

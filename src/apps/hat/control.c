@@ -7,6 +7,7 @@
 #include <stdlib.h>
 
 #define FIXED_POINT_EXP 1000
+#define DO_TANK_TURN 1
 
 int32_t apply_response_curve(int32_t input, int32_t zero_thresh, int32_t sat_thresh, int32_t sat_output)
 {
@@ -26,9 +27,40 @@ int32_t apply_response_curve(int32_t input, int32_t zero_thresh, int32_t sat_thr
     }
 }
 
+void reverse_duty(motor_data_t* move)
+{
+    if (move->left_motor_direction == BACKWARD) {
+        move->left_motor_pwm = 1000 - move->left_motor_pwm;
+    }
+    if (move->right_motor_direction == BACKWARD) {
+        move->right_motor_pwm = 1000 - move->right_motor_pwm;
+    }
+}
+
 motor_data_t pwm_from_xy(int32_t forward_back, int32_t left_right)
 {
     motor_data_t move;
+
+#if DO_TANK_TURN
+    if (forward_back == 0) {
+        if (left_right > 0) {
+            move.right_motor_direction = FORWARD;
+            move.left_motor_direction = BACKWARD;
+        } else if (left_right < 0) {
+            move.right_motor_direction = BACKWARD;
+            move.left_motor_direction = FORWARD;
+        } else {
+            // no movement
+            move.left_motor_direction = FORWARD;
+            move.right_motor_direction = FORWARD;
+        }
+        move.left_motor_pwm = left_right;
+        move.right_motor_pwm = left_right;
+
+        reverse_duty(&move);
+        return move;
+    }
+#endif
 
     move.left_motor_direction = forward_back > 0 ? FORWARD : BACKWARD;
     move.left_motor_pwm = abs(forward_back);
@@ -46,19 +78,15 @@ motor_data_t pwm_from_xy(int32_t forward_back, int32_t left_right)
         move.left_motor_pwm /= 1000;
     }
 
-    if (move.left_motor_direction == BACKWARD) {
-        move.left_motor_pwm = 1000 - move.left_motor_pwm;
-    }
-    if (move.right_motor_direction == BACKWARD) {
-        move.right_motor_pwm = 1000 - move.right_motor_pwm;
-    }
+    reverse_duty(&move);
+
     return move;
 }
 
 motor_data_t get_motor_values_imu(int16_t* accel_data)
 {
-    int32_t forward_back = apply_response_curve(accel_data[1], 3000, 6000, 1000);
-    int32_t left_right = apply_response_curve(accel_data[0], 4000, 6000, 1000);
+    int32_t forward_back = apply_response_curve(accel_data[1], 2000, 6000, 1000);
+    int32_t left_right = apply_response_curve(accel_data[0], 1000, 8000, 700);
     return pwm_from_xy(forward_back, left_right);
 }
 
