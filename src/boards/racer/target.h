@@ -32,26 +32,29 @@
 #define LED1_PIO PA1_PIO
 #define LED2_PIO PA0_PIO
 
-/* General  */
-#define APPENDAGE_PIO PA1_PIO
-#define SERVO_PWM_PIO PA2_PIO
-
-/* Button  */
-#define BUTTON_PIO PA16_PIO
-
-/* H-bridges   */
-#define MOTOR_LEFT_PWM_PIO PA11_PIO
-#define MOTOR_LEFT_PHASE_PIO PB4_PIO
-#define MOTOR_LEFT_MODE_PIO PA27_PIO
-#define MOTOR_RIGHT_PWM_PIO PA7_PIO
-#define MOTOR_RIGHT_PHASE_PIO PA6_PIO
-#define MOTOR_RIGHT_MODE_PIO PA28_PIO
-#define MOTOR_SLEEP_PIO PA29_PIO
-
 /* Radio  */
 #define RADIO_CS_PIO PA11_PIO
 #define RADIO_CE_PIO PA23_PIO
 #define RADIO_IRQ_PIO PA15_PIO
 
+#define LEDTAPE_PIO PB0_PIO
+
+//AIN1
+#define PWM1_PIO PA20_PIO
+//AIN2
+#define PWM2_PIO PA19_PIO
+//BIN1
+#define PWM3_PIO PA16_PIO
+//BIN2
+#define PWM4_PIO PA17_PIO
+//nSLEEP
+#define nSLP_PIO PA29_PIO
+
+//define bumper pin
+#define BUMPER_DETECT PA30_PIO
+
+//radio select
+#define TOP_SW PB14_PIO
+#define BOT_SW PB13_PIO
 
 #endif /* TARGET_H  */

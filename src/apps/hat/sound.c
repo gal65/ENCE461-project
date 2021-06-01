@@ -67,7 +67,7 @@ void tweet_sound_init(void)
 {
     static tweeter_scale_t scale_table[] = TWEETER_SCALE_TABLE(TWEETER_TASK_RATE);
     tweeter = tweeter_init(&tweeter_info, TWEETER_TASK_RATE, scale_table);
-    pio_config_set(BUZZER_PIO, PIO_OUTPUT_LOW);
+    pio_config_set(EXT_BUZZER_PIO, PIO_OUTPUT_LOW);
     melody = mmelody_init(&melody_info, TUNE_TASK_RATE,
         (mmelody_callback_t)tweeter_note_play, tweeter);
 
@@ -78,7 +78,7 @@ void tweet_sound_init(void)
 
 static void tweeter_task(void)
 {
-    pio_output_set(BUZZER_PIO, tweeter_update(tweeter));
+    pio_output_set(EXT_BUZZER_PIO, tweeter_update(tweeter));
 }
 
 static void tune_task(void)
