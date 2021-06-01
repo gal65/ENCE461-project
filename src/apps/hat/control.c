@@ -10,6 +10,8 @@
 #define FIXED_POINT_EXP 1000
 #define DO_TANK_TURN 0
 
+uint16_t lfsr_key = 0xB00B;
+
 int32_t apply_response_curve(int32_t input, int32_t zero_thresh, int32_t sat_thresh, int32_t sat_output)
 {
     int32_t input_abs = abs(input);
@@ -113,21 +115,6 @@ mosi_comms_t get_motor_values_joystick(uint16_t x_data, uint16_t y_data)
 
 uint8_t read_servo_position(void)
 {
-    // if (pio_input_get(BLACK_BUTTON_PIO) == false) {
-    //     // check black button
-    //     // set_servo(0);
-    //     pio_output_low(STATUS_LED_B_PIO);
-    //     pio_output_high(STATUS_LED_R_PIO);
-    //     // delay_ms(250);
-    //     servo_position = 0;
-    // } else if (pio_input_get(RED_BUTTON_PIO) == false) {
-    //     // check red button
-    //     // set_servo(255);
-    //     pio_output_low(STATUS_LED_R_PIO);
-    //     pio_output_high(STATUS_LED_B_PIO);
-    //     // delay_ms(250);
-    //     servo_position = 255;
-    // }
     if (!pio_input_get(RED_BUTTON_PIO)) {
         pio_output_low(STATUS_LED_B_PIO);
         pio_output_high(STATUS_LED_R_PIO);
@@ -173,6 +160,8 @@ void imu_control_task(void)
     mosi_comms_t move = get_motor_values_imu(accel);
 
     move.servo_position = read_servo_position();
+    move.set_key = false;
+    move.key = lfsr_key;
 
 #if USB_DEBUG
     print_mosi_comms(move);
@@ -194,6 +183,8 @@ void joystick_control_task(void)
     mosi_comms_t move = get_motor_values_joystick(x_data, y_data);
 
     move.servo_position = read_servo_position();
+    move.set_key = false;
+    move.key = lfsr_key;
 
 #if USB_DEBUG
     print_mosi_comms(move);
@@ -229,4 +220,27 @@ void change_control_method_task(void)
 #endif
     }
     prev_button_state = button_state;
+}
+
+// linear feedback shift register
+void gen_key(void)
+{
+    lfsr_key ^= lfsr_key >> 7;
+    lfsr_key ^= lfsr_key << 9;
+    lfsr_key ^= lfsr_key >> 13;
+}
+
+void generate_key_task(void)
+{
+    mosi_comms_t key_command = { 0 };
+    gen_key();
+    key_command.set_key = true;
+    key_command.key = lfsr_key;
+    nrf24_write(nrf, &key_command, sizeof(mosi_comms_t));
+    nrf24_listen(nrf);
+
+#if USB_DEBUG
+    print_mosi_comms(key_command);
+    fflush(stdout);
+#endif
 }

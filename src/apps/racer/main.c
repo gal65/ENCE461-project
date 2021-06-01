@@ -31,17 +31,24 @@ uint8_t servo_pos;
 #define BUMPER_TIMER_TICKS (PACER_RATE_HZ * 5)
 #define BUMPER_HOLDOFF_TIMER_TICKS (PACER_RATE_HZ * 1)
 
+// half second motor timeout
+#define MOTOR_TIMEOUT (PACER_RATE_HZ / 2)
+
 typedef enum {
     BUMPER_WAITING,
     BUMPER_HOLDOFF,
     NORMAL
 } state_t;
 
+uint16_t key = 0;
+
 state_t state = NORMAL;
 int waiting_counter = 0;
 int holdoff_counter = 0;
 
 int color_update_counter = 0;
+
+int motor_timeout_counter = 0;
 
 int main(void)
 {
@@ -89,7 +96,7 @@ int main(void)
             pwm_duty_set(left_motor_pwm, 0);
             pio_config_set(LEFT_MOTOR_DIRECTION_PIO, PIO_OUTPUT_LOW);
             pwm_duty_set(right_motor_pwm, 0);
-            pio_config_set(RIGHT_MOTOR_DIRECTION_PIO, PIO_OUTPUT_LOW); //stop
+            pio_config_set(RIGHT_MOTOR_DIRECTION_PIO, PIO_OUTPUT_LOW);
             char buffer1[32];
             sprintf(buffer1, "1\r\n");
             nrf24_write(nrf, buffer1, sizeof(buffer1));
@@ -97,21 +104,38 @@ int main(void)
             state = BUMPER_WAITING;
         }
 
-        if (state != BUMPER_WAITING) {
-            mosi_comms_t rx;
-            if (nrf24_read(nrf, &rx, sizeof(mosi_comms_t))) {
+        motor_timeout_counter++;
+
+        mosi_comms_t rx;
+        if (nrf24_read(nrf, &rx, sizeof(mosi_comms_t))) {
+            if (rx.set_key) {
+                motor_timeout_counter = 0;
+                key = rx.key;
+            } else if (rx.key == key) {
+                // only accept packet if it contains the same key that was sent
+
+                motor_timeout_counter = 0;
 #if ENABLE_USB
                 print_mosi_comms(rx);
                 fflush(stdout);
 #endif
                 pio_output_toggle(LED2_PIO);
 
-                pwm_duty_set(left_motor_pwm, rx.left_motor_pwm);
-                pwm_duty_set(right_motor_pwm, rx.right_motor_pwm);
-                pio_output_set(LEFT_MOTOR_DIRECTION_PIO, rx.left_motor_direction);
-                pio_output_set(RIGHT_MOTOR_DIRECTION_PIO, rx.right_motor_direction);
+                if (state != BUMPER_WAITING) {
+                    pwm_duty_set(left_motor_pwm, rx.left_motor_pwm);
+                    pwm_duty_set(right_motor_pwm, rx.right_motor_pwm);
+                    pio_output_set(LEFT_MOTOR_DIRECTION_PIO, rx.left_motor_direction);
+                    pio_output_set(RIGHT_MOTOR_DIRECTION_PIO, rx.right_motor_direction);
+                }
                 servo_pos = rx.servo_position;
             }
+        }
+
+        if (motor_timeout_counter >= MOTOR_TIMEOUT) {
+            pwm_duty_set(left_motor_pwm, 0);
+            pio_config_set(LEFT_MOTOR_DIRECTION_PIO, PIO_OUTPUT_LOW);
+            pwm_duty_set(right_motor_pwm, 0);
+            pio_config_set(RIGHT_MOTOR_DIRECTION_PIO, PIO_OUTPUT_LOW);
         }
     }
 

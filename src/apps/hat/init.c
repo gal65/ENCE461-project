@@ -90,6 +90,7 @@ void init_hat(void)
     pio_config_set(JOYSTICK_BUTTON_PIO, PIO_PULLUP);
     pio_config_set(EXT_BUTTON1_PIO, PIO_PULLUP);
     pio_config_set(EXT_BUTTON2_PIO, PIO_PULLUP);
+    pio_config_set(PSEUDO_RANDOM_PIO, PIO_INPUT);
 
     // sound_init();
 

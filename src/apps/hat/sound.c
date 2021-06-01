@@ -85,7 +85,8 @@ void tweet_sound_play(void)
 {
     int ticks_per_melody = TWEETER_TASK_RATE / TUNE_TASK_RATE;
 
-    for (int i = 0; i < 158000; i++) {
+    // for (int i = 0; i < 158000; i++) {
+    for (int i = 0; i < 50000; i++) {
         DELAY_US(1000000 / TWEETER_TASK_RATE);
         tweeter_task();
         if (!(i % ticks_per_melody)) {

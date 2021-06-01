@@ -14,12 +14,14 @@
 
 void print_mosi_comms(mosi_comms_t data)
 {
-    printf("left: %-4lu %s, right %-4lu %s, servo %d\n",
+    printf("%sleft: %-4lu %s, right %-4lu %s, servo %d, key %d\n",
+        data.set_key ? "[SETTING KEY] " : "",
         data.left_motor_pwm,
         data.left_motor_direction == FORWARD ? "FORWD" : "BAKWD",
         data.right_motor_pwm,
         data.left_motor_direction == FORWARD ? "FORWD" : "BAKWD",
-        data.servo_position);
+        data.servo_position,
+        data.key);
 }
 
 // positino 0 -> 255

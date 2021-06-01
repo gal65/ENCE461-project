@@ -12,5 +12,6 @@ void imu_control_task(void);
 void joystick_control_task(void);
 void change_control_method_task(void);
 uint8_t update_servo_position_task(void);
+void generate_key_task(void);
 
 #endif
