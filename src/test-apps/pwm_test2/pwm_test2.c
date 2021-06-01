@@ -225,17 +225,14 @@ main (void)
             pio_config_set(PWM2_PIO, PIO_OUTPUT_LOW);
             pwm_duty_set(pwm3, 0);
             pio_config_set(PWM4_PIO, PIO_OUTPUT_LOW);//stop
-            char buffer[32];
-            sprintf (buffer, "1\r\n");
-            nrf24_write(nrf, buffer, sizeof (buffer));
-            delay_ms(6000);
-            pwm_duty_set(pwm1, 0);
-            pio_config_set(PWM2_PIO, PIO_OUTPUT_LOW);
-            pwm_duty_set(pwm3, 0);
-            pio_config_set(PWM4_PIO, PIO_OUTPUT_LOW);//stop
+            char buffer1[32];
+            sprintf (buffer1, "1\r\n");
+            nrf24_write(nrf, buffer1, sizeof (buffer1));
+            delay_ms(5000);
+            nrf24_listen(nrf);
         }
 
-        if (battery_millivolts() < 5000) {
+        if (battery_millivolts() < 6400) {
             pio_config_set(LED2_PIO, PIO_OUTPUT_LOW);
         }else{
             pio_config_set(LED2_PIO, PIO_OUTPUT_HIGH);
@@ -288,6 +285,9 @@ main (void)
         }else{
             pio_config_set(PWM4_PIO, PIO_OUTPUT_HIGH);
         }
+        //change servo position
+        // int servo = atoi(&buffer[15]);
+        // set_servo(servo);
 
         
         
