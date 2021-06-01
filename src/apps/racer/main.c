@@ -11,6 +11,7 @@
 //radio
 #include "common.h"
 #include "delay.h"
+#include "init.h"
 #include "ledbuffer.h"
 #include "nrf24.h"
 #include "stdio.h"
@@ -20,35 +21,6 @@
 //battery test
 #include "adc.h"
 
-//LED strip
-#define NUM_LEDS 26
-#define LEDTAPE_PIO PB0_PIO
-
-//AIN1
-#define PWM1_PIO PA20_PIO
-//AIN2
-#define PWM2_PIO PA19_PIO
-//BIN1
-#define PWM3_PIO PA16_PIO
-//BIN2
-#define PWM4_PIO PA17_PIO
-//nSLEEP
-#define nSLP_PIO PA29_PIO
-
-#define PWM_FREQ_HZ 100e3
-
-//define bumper pin
-#define BUMPER_DETECT PA30_PIO
-
-//radio select
-#define TOP_SW PB14_PIO
-#define BOT_SW PB13_PIO
-
-//battery
-#define BATTERY_VOLTAGE_ADC ADC_CHANNEL_8
-
-#define ENABLE_USB 0
-
 /* Define how fast ticks occur.  This must be faster than
    TICK_RATE_MIN.  */
 enum { LOOP_POLL_RATE = 20 };
@@ -56,79 +28,7 @@ enum { LOOP_POLL_RATE = 20 };
 /* Define LED flash rate in Hz.  */
 enum { LED_FLASH_RATE = 1 };
 
-static const pwm_cfg_t pwm1_cfg = {
-    .pio = PWM1_PIO,
-    .period = PWM_PERIOD_DIVISOR(PWM_FREQ_HZ),
-    .duty = PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 50),
-    .align = PWM_ALIGN_LEFT,
-    .polarity = PWM_POLARITY_LOW,
-    .stop_state = PIO_OUTPUT_LOW
-};
-
-static const pwm_cfg_t pwm2_cfg = {
-    .pio = PWM2_PIO,
-    .period = PWM_PERIOD_DIVISOR(PWM_FREQ_HZ),
-    .duty = PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 50),
-    .align = PWM_ALIGN_LEFT,
-    .polarity = PWM_POLARITY_HIGH,
-    .stop_state = PIO_OUTPUT_LOW
-};
-
-static const pwm_cfg_t pwm3_cfg = {
-    .pio = PWM3_PIO,
-    .period = PWM_PERIOD_DIVISOR(PWM_FREQ_HZ),
-    .duty = PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 50),
-    .align = PWM_ALIGN_LEFT,
-    .polarity = PWM_POLARITY_LOW,
-    .stop_state = PIO_OUTPUT_LOW
-};
-
-static const pwm_cfg_t pwm4_cfg = {
-    .pio = PWM4_PIO,
-    .period = PWM_PERIOD_DIVISOR(PWM_FREQ_HZ),
-    .duty = PWM_DUTY_DIVISOR(PWM_FREQ_HZ, 50),
-    .align = PWM_ALIGN_LEFT,
-    .polarity = PWM_POLARITY_HIGH,
-    .stop_state = PIO_OUTPUT_LOW
-};
-
-//paninc function for the radio
-static void panic(void)
-{
-    while (1) {
-        pio_output_toggle(LED1_PIO);
-        pio_output_toggle(LED2_PIO);
-        delay_ms(1000);
-    }
-}
-
-//battery detection set up
-static adc_t battery_sensor;
-
-static int battery_sensor_init(void)
-{
-    adc_cfg_t bat = {
-        .channel = BATTERY_VOLTAGE_ADC,
-        .bits = 12,
-        .trigger = ADC_TRIGGER_SW,
-        .clock_speed_kHz = F_CPU / 4000,
-    };
-
-    battery_sensor = adc_init(&bat);
-
-    return (battery_sensor == 0) ? -1 : 0;
-}
-
-static uint16_t battery_millivolts(void)
-{
-    adc_sample_t s;
-    adc_read(battery_sensor, &s, sizeof(s));
-
-    // 5.6 pull down & 10k pull up gives a scale factor or
-    // 5.6 / (5.6 + 10) = 0.3590
-    // 4096 (max ADC reading) * 0.3590 ~= 1365
-    return (uint16_t)((int)s) * 3300 / 1365;
-}
+static uint16_t battery_millivolts(void);
 
 int main(void)
 {
@@ -136,71 +36,13 @@ int main(void)
     bool blue = false;
     int count = 0;
 
-    ledbuffer_t* leds = ledbuffer_init(LEDTAPE_PIO, NUM_LEDS);
-    //LED strip
-    pwm_t pwm1;
-    pwm_t pwm2;
-    pwm_t pwm3;
-    pwm_t pwm4;
-
-    pwm1 = pwm_init(&pwm1_cfg);
-    pwm2 = pwm_init(&pwm2_cfg);
-    pwm3 = pwm_init(&pwm3_cfg);
-    pwm4 = pwm_init(&pwm4_cfg);
+    init_racer();
 
     uint8_t flash_ticks;
-
-    /* Configure LED PIO as output.  */
-    pio_config_set(LED1_PIO, PIO_OUTPUT_HIGH);
-    pio_config_set(LED2_PIO, PIO_OUTPUT_HIGH);
-
-    //configure Bumper to be NO(normally open) to set bumper_activite to high
-    pio_config_set(BUMPER_DETECT, PIO_INPUT_PULLUP);
-
-    //RADIO select changing address 11 -> 100, 10 -> 90, 01 -> 80, 00 -> 70
-    pio_config_set(TOP_SW, PIO_INPUT_PULLUP);
-    pio_config_set(BOT_SW, PIO_INPUT_PULLUP);
 
     pacer_init(LOOP_POLL_RATE);
     flash_ticks = 0;
 
-    //Start pwm channels
-    pwm_channels_start(pwm_channel_mask(pwm1) | pwm_channel_mask(pwm2) | pwm_channel_mask(pwm3) | pwm_channel_mask(pwm4));
-    pio_config_set(nSLP_PIO, PIO_OUTPUT_HIGH);
-
-    //radio part
-    spi_cfg_t nrf_spi = {
-        .channel = 0,
-        .clock_speed_kHz = 1000,
-        .cs = RADIO_CS_PIO,
-        .mode = SPI_MODE_0,
-        .cs_mode = SPI_CS_MODE_FRAME,
-        .bits = 8,
-    };
-    nrf24_t* nrf;
-    spi_t spi;
-
-#if ENABLE_USB
-    usb_cdc_t usb_cdc;
-    usb_serial_init(NULL, "/dev/usb_tty");
-
-    freopen("/dev/usb_tty", "a", stdout);
-    freopen("/dev/usb_tty", "r", stdin);
-#endif
-    spi = spi_init(&nrf_spi);
-    nrf = nrf24_create(spi, RADIO_CE_PIO, RADIO_IRQ_PIO);
-    if (!nrf)
-        panic();
-
-    // initialize the NRF24 radio with its unique 5 byte address
-    if (!nrf24_begin(nrf, 15, 100, 32))
-        panic();
-    if (!nrf24_listen(nrf))
-        panic();
-    //
-    if (battery_sensor_init() < 0)
-        panic();
-    int state = 0;
     while (1) {
         pacer_wait();
 
@@ -264,6 +106,8 @@ int main(void)
             pio_output_toggle(LED2_PIO);
             fflush(stdout);
 
+            set_servo(atoi(&buffer[14]));
+
             int duty_1 = atoi(&buffer[4]);
             pwm_duty_set(pwm1, duty_1);
             int dir_1 = atoi(&buffer[0]);
@@ -287,4 +131,15 @@ int main(void)
     }
 
     return 0;
+}
+
+static uint16_t battery_millivolts(void)
+{
+    adc_sample_t s;
+    adc_read(battery_sensor, &s, sizeof(s));
+
+    // 5.6 pull down & 10k pull up gives a scale factor or
+    // 5.6 / (5.6 + 10) = 0.3590
+    // 4096 (max ADC reading) * 0.3590 ~= 1365
+    return (uint16_t)((int)s) * 3300 / 1365;
 }

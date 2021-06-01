@@ -94,10 +94,12 @@ void check_sleep_mode_task(void)
 int main(void)
 {
     init_hat();
-    pio_config_set(PA10_PIO, PIO_PULLUP);
-    pio_config_set(PA9_PIO, PIO_PULLUP);
-    pio_config_set(PA19_PIO, PIO_OUTPUT_HIGH);
-    pio_config_set(PA16_PIO, PIO_OUTPUT_HIGH);
+    pio_config_set(EXT_STATUS1_PIO, PIO_OUTPUT_LOW);
+    pio_config_set(EXT_STATUS2_PIO, PIO_OUTPUT_LOW);
+    pio_config_set(EXT_STATUS3_PIO, PIO_OUTPUT_LOW);
+    // tweet_sound_play();
+    // for (;;) {
+    // }
 
     task_t tasks[] = {
         create_task("blink", blink_task, 500),

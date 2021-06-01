@@ -82,8 +82,14 @@ void init_hat(void)
 {
     pio_config_set(LED1_PIO, PIO_OUTPUT_HIGH);
     pio_config_set(LED2_PIO, PIO_OUTPUT_HIGH);
+    pio_config_set(EXT_STATUS1_PIO, PIO_OUTPUT_HIGH);
+    pio_config_set(EXT_STATUS2_PIO, PIO_OUTPUT_HIGH);
+    pio_config_set(EXT_STATUS3_PIO, PIO_OUTPUT_HIGH);
+
     pio_config_set(BUTTON_PIO, PIO_PULLUP);
     pio_config_set(JOYSTICK_BUTTON_PIO, PIO_PULLUP);
+    pio_config_set(EXT_BUTTON1_PIO, PIO_PULLUP);
+    pio_config_set(EXT_BUTTON2_PIO, PIO_PULLUP);
 
     // sound_init();
 

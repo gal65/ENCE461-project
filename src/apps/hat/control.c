@@ -1,4 +1,5 @@
 #include "control.h"
+#include "delay.h"
 #include "init.h"
 #include "kernel.h"
 #include "sound.h"
@@ -118,14 +119,14 @@ uint8_t update_servo_position_task(void)
         // set_servo(0);
         pio_output_low(STATUS_LED_B_PIO);
         pio_output_high(STATUS_LED_R_PIO);
-        delay_ms(250);
+        // delay_ms(250);
         servo_position = 0;
-    } else if (pio_input_get(RED_BUTTON_PIO) == false) { 
+    } else if (pio_input_get(RED_BUTTON_PIO) == false) {
         // check red button
         // set_servo(255);
         pio_output_low(STATUS_LED_R_PIO);
         pio_output_high(STATUS_LED_B_PIO);
-        delay_ms(250);
+        // delay_ms(250);
         servo_position = 255;
     }
     return servo_position;
@@ -189,9 +190,11 @@ void joystick_control_task(void)
 
     motor_data_t move = get_motor_values_joystick(x_data, y_data);
 
-    snprintf(radio_send_buffer, sizeof(radio_send_buffer), "%d %d %-4lu %-4lu",
+    uint8_t new_servo_position = update_servo_position_task();
+
+    snprintf(radio_send_buffer, sizeof(radio_send_buffer), "%d %d %-4lu %-4lu %-4d",
         move.left_motor_direction, move.right_motor_direction,
-        move.left_motor_pwm, move.right_motor_pwm);
+        move.left_motor_pwm, move.right_motor_pwm, new_servo_position);
 
 #if USB_DEBUG
     printf("%s\n", radio_send_buffer);
