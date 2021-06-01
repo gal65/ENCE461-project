@@ -91,19 +91,35 @@ void check_sleep_mode_task(void)
     prev_button_state = button_state;
 }
 
-#define PWM1_PIO PA24_PIO
-#define PWM2_PIO PA24_PIO
+#define PWM1_PIO PA25_PIO
+#define PWM2_PIO PA25_PIO
 
 int main(void)
 {
     init_hat();
-    // init_servo(PA24_PIO);
-    // while (true) {
-    //     set_servo(0);
-    //     delay_ms(500);
-    //     set_servo(255);
-    //     delay_ms(500);
-    // }
+    pio_config_set(PA10_PIO, PIO_PULLUP);
+    pio_config_set(PA9_PIO, PIO_PULLUP);
+    pio_config_set(PA20_PIO, PIO_OUTPUT_HIGH);
+    pio_config_set(PA19_PIO, PIO_OUTPUT_HIGH);
+    pio_config_set(PA16_PIO, PIO_OUTPUT_HIGH);
+    
+    init_servo(PA25_PIO);
+    tweet_sound_play();
+    while (true) {
+        if (pio_input_get(PA10_PIO) == false) {
+            // black button
+            set_servo(0);
+            pio_output_low(PA19_PIO);
+            pio_output_high(PA16_PIO);
+            delay_ms(250);
+        } else if (pio_input_get(PA9_PIO) == false) { 
+            // red button
+            set_servo(255);
+            pio_output_low(PA16_PIO);
+            pio_output_high(PA19_PIO);
+            delay_ms(250);
+        }
+    }
 
     task_t tasks[] = {
         create_task("blink", blink_task, 500),
