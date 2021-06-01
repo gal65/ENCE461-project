@@ -2,6 +2,8 @@ PERIPHERALS = adc dac pwm
 DRIVERS = rf pacer usb_serial mpu ledtape
 TARGET = main.bin
 
+export BOARD = hat
+
 SRC = $(wildcard *.c)
 OPT = -O3
 
@@ -12,9 +14,5 @@ SRC += ../common/common.c
 SRC += ../../mmculib/mmelody.c
 SRC += ../../mmculib/ticker.c
 SRC += ../../mmculib/tweeter.c
-
-ifneq ($(BOARD), hat)
-$(error BOARD should be set to hat!)
-endif
 
 include ../../boards/board.mk

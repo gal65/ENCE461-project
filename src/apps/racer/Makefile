@@ -1,14 +1,13 @@
-PERIPHERALS = pit pwm adc
+PERIPHERALS = pwm pit adc
 DRIVERS = led pacer usb_serial rf ledtape
-TARGET = racer.bin
 
-SRC = racer.c
+export BOARD = racer
+
+TARGET = main.bin
+SRC = $(wildcard *.c)
+OPT = -O3
+
 INCLUDES += -I../common
 SRC += ../common/common.c
-OPT = -O2
-
-ifneq ($(BOARD), racer)
-$(error BOARD should be set to racer!)
-endif
 
 include ../../boards/board.mk
